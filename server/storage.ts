@@ -175,6 +175,12 @@ export class MemStorage implements IStorage {
       phone: updates.phone !== undefined ? updates.phone : business.phone,
       customBusinessType: updates.customBusinessType !== undefined ? updates.customBusinessType : business.customBusinessType,
       description: updates.description !== undefined ? updates.description : business.description,
+      city: updates.city !== undefined ? updates.city : business.city,
+      primaryNeighborhood: updates.primaryNeighborhood !== undefined ? updates.primaryNeighborhood : business.primaryNeighborhood,
+      serviceAreas: updates.serviceAreas !== undefined ? updates.serviceAreas : business.serviceAreas,
+      serviceRadius: updates.serviceRadius !== undefined ? updates.serviceRadius : business.serviceRadius,
+      serviceAtLocation: updates.serviceAtLocation !== undefined ? updates.serviceAtLocation : business.serviceAtLocation,
+      serviceAtCustomerLocation: updates.serviceAtCustomerLocation !== undefined ? updates.serviceAtCustomerLocation : business.serviceAtCustomerLocation,
       isOnboardingComplete: updates.isOnboardingComplete !== undefined ? updates.isOnboardingComplete : business.isOnboardingComplete,
     };
     this.businesses.set(id, updatedBusiness);
