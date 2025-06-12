@@ -3,7 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, TrendingUp, TrendingDown, Activity } from "lucide-react";
 
 export default function Budget() {
-  const { data: metricsSummary, isLoading } = useQuery({
+  const { data: metricsSummary, isLoading } = useQuery<{
+    totalSpend: number;
+    totalImpressions: number;
+    totalClicks: number;
+    activeCampaigns: number;
+  }>({
     queryKey: ["/api/metrics/business/1/summary"],
   });
 

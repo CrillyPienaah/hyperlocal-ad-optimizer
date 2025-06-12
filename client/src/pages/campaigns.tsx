@@ -4,11 +4,12 @@ import CreateCampaignModal from "@/components/campaigns/create-campaign-modal";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useState } from "react";
+import type { Campaign } from "@shared/schema";
 
 export default function Campaigns() {
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  const { data: campaigns = [], isLoading } = useQuery({
+  const { data: campaigns = [], isLoading } = useQuery<Campaign[]>({
     queryKey: ["/api/campaigns/business/1"],
   });
 
@@ -30,7 +31,7 @@ export default function Campaigns() {
 
       {/* Content */}
       <div className="p-6">
-        <CampaignsTable campaigns={campaigns} isLoading={isLoading} />
+        <CampaignsTable campaigns={campaigns as any} isLoading={isLoading} />
       </div>
 
       {/* Create Campaign Modal */}

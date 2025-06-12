@@ -7,15 +7,21 @@ import { Button } from "@/components/ui/button";
 import { Plus, Bell } from "lucide-react";
 import { useState } from "react";
 import CreateCampaignModal from "@/components/campaigns/create-campaign-modal";
+import type { Campaign } from "@shared/schema";
 
 export default function Dashboard() {
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  const { data: campaigns = [], isLoading: campaignsLoading } = useQuery({
+  const { data: campaigns = [], isLoading: campaignsLoading } = useQuery<Campaign[]>({
     queryKey: ["/api/campaigns/business/1"],
   });
 
-  const { data: metricsSummary, isLoading: metricsLoading } = useQuery({
+  const { data: metricsSummary, isLoading: metricsLoading } = useQuery<{
+    totalSpend: number;
+    totalImpressions: number;
+    totalClicks: number;
+    activeCampaigns: number;
+  }>({
     queryKey: ["/api/metrics/business/1/summary"],
   });
 
@@ -43,7 +49,7 @@ export default function Dashboard() {
       {/* Dashboard Content */}
       <div className="p-6">
         {/* Metrics Grid */}
-        <MetricsGrid summary={metricsSummary} isLoading={metricsLoading} />
+        <MetricsGrid summary={metricsSummary as any} isLoading={metricsLoading} />
 
         {/* Main Dashboard Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
@@ -58,7 +64,7 @@ export default function Dashboard() {
 
         {/* Campaigns Table */}
         <div className="mt-8">
-          <CampaignsTable campaigns={campaigns} isLoading={campaignsLoading} />
+          <CampaignsTable campaigns={campaigns as any} isLoading={campaignsLoading} />
         </div>
       </div>
 
