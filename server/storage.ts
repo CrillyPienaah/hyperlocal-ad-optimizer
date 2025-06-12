@@ -67,6 +67,9 @@ export class MemStorage implements IStorage {
       targetAgeGroups: JSON.stringify(["25-34", "35-44", "18-24"]),
       customerInterests: JSON.stringify(["coffee", "technology", "productivity", "community", "sustainability"]),
       communityInvolvement: "high",
+      budgetTier: "201-500",
+      budgetTimeframe: "monthly",
+      marketingGoal: "drive-foot-traffic",
       isOnboardingComplete: true,
       createdAt: new Date(),
     };
@@ -166,6 +169,9 @@ export class MemStorage implements IStorage {
       targetAgeGroups: insertBusiness.targetAgeGroups || null,
       customerInterests: insertBusiness.customerInterests || null,
       communityInvolvement: insertBusiness.communityInvolvement || null,
+      budgetTier: insertBusiness.budgetTier ?? null,
+      budgetTimeframe: insertBusiness.budgetTimeframe ?? null,
+      marketingGoal: insertBusiness.marketingGoal ?? null,
       isOnboardingComplete: insertBusiness.isOnboardingComplete || false,
       createdAt: new Date(),
     };

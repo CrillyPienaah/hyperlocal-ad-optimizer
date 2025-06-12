@@ -24,6 +24,10 @@ export const businesses = pgTable("businesses", {
   targetAgeGroups: text("target_age_groups"), // JSON array of age groups
   customerInterests: text("customer_interests"), // JSON array of interests
   communityInvolvement: text("community_involvement"),
+  // Budget fields
+  budgetTier: text("budget_tier"), // "50-200", "201-500", "501-1000", "1000+"
+  budgetTimeframe: text("budget_timeframe"), // "monthly", "per-campaign"
+  marketingGoal: text("marketing_goal"),
   isOnboardingComplete: boolean("is_onboarding_complete").notNull().default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
@@ -90,6 +94,25 @@ export const audienceProfileSchema = z.object({
   customerInterests: z.array(z.string().min(1).max(50)).min(1, "Add at least one customer interest").max(20, "Too many interests"),
   communityInvolvement: z.enum(["high", "medium", "low", "none"], {
     errorMap: () => ({ message: "Please select community involvement level" })
+  }),
+});
+
+export const budgetProfileSchema = z.object({
+  budgetTier: z.enum(["50-200", "201-500", "501-1000", "1000+"], {
+    errorMap: () => ({ message: "Please select a budget tier" })
+  }),
+  budgetTimeframe: z.enum(["monthly", "per-campaign"], {
+    errorMap: () => ({ message: "Please select budget timeframe" })
+  }),
+  marketingGoal: z.enum([
+    "increase-awareness",
+    "drive-foot-traffic", 
+    "generate-leads",
+    "boost-sales",
+    "promote-events",
+    "build-community"
+  ], {
+    errorMap: () => ({ message: "Please select a marketing goal" })
   }),
 });
 
