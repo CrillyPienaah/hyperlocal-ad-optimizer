@@ -82,16 +82,10 @@ export default function AdCopyGenerator({ businessId, selectedChannels = [] }: A
   const regenerateMutation = useMutation({
     mutationFn: async () => {
       const formData = form.getValues();
-      const response = await apiRequest("/api/content/generate-copy", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          businessId,
-          ...formData,
-          selectedChannels,
-        }),
+      const response = await apiRequest("POST", "/api/content/generate-copy", {
+        businessId,
+        ...formData,
+        selectedChannels,
       });
       return response.json();
     },
