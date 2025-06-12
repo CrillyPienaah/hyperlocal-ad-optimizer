@@ -212,6 +212,96 @@ app.get("/api/business-profile/:id", async (req, res) => {
   }
 });
 
+// Get complete business profile with formatted data and validation
+app.get("/api/business-profile/:id/complete", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const business = await storage.getBusiness(id);
+    
+    if (!business) {
+      return res.status(404).json({ message: "Business not found" });
+    }
+    
+    // Parse JSON fields and format data
+    const profile = {
+      ...business,
+      targetAgeGroups: business.targetAgeGroups ? JSON.parse(business.targetAgeGroups) : [],
+      customerInterests: business.customerInterests ? JSON.parse(business.customerInterests) : [],
+      serviceAreas: business.serviceAreas ? business.serviceAreas.split(', ') : [],
+      completeness: {
+        business: !!(business.name && business.email && business.address && business.industry && business.businessType),
+        location: !!(business.city && business.primaryNeighborhood && business.serviceAreas),
+        audience: !!(business.customerDescription && business.targetAgeGroups && business.customerInterests && business.communityInvolvement),
+        budget: !!(business.budgetTier && business.budgetTimeframe && business.marketingGoal),
+        overall: business.isOnboardingComplete
+      }
+    };
+    
+    res.json(profile);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// Export business profile as JSON
+app.get("/api/business-profile/:id/export", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const business = await storage.getBusiness(id);
+    
+    if (!business) {
+      return res.status(404).json({ message: "Business not found" });
+    }
+    
+    // Create formatted export data
+    const exportData = {
+      businessProfile: {
+        generatedAt: new Date().toISOString(),
+        businessInfo: {
+          name: business.name,
+          email: business.email,
+          phone: business.phone,
+          address: business.address,
+          industry: business.industry,
+          businessType: business.businessType,
+          customBusinessType: business.customBusinessType,
+          description: business.description
+        },
+        locationDetails: {
+          city: business.city,
+          primaryNeighborhood: business.primaryNeighborhood,
+          serviceAreas: business.serviceAreas ? business.serviceAreas.split(', ') : [],
+          serviceRadius: business.serviceRadius,
+          serviceAtLocation: business.serviceAtLocation,
+          serviceAtCustomerLocation: business.serviceAtCustomerLocation
+        },
+        targetAudience: {
+          customerDescription: business.customerDescription,
+          targetAgeGroups: business.targetAgeGroups ? JSON.parse(business.targetAgeGroups) : [],
+          customerInterests: business.customerInterests ? JSON.parse(business.customerInterests) : [],
+          communityInvolvement: business.communityInvolvement
+        },
+        budgetAndGoals: {
+          budgetTier: business.budgetTier,
+          budgetTimeframe: business.budgetTimeframe,
+          marketingGoal: business.marketingGoal
+        },
+        metadata: {
+          profileComplete: business.isOnboardingComplete,
+          createdAt: business.createdAt,
+          lastUpdated: new Date().toISOString()
+        }
+      }
+    };
+    
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', `attachment; filename="${business.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_profile.json"`);
+    res.json(exportData);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 // Campaign routes
 app.get("/api/campaigns/business/:businessId", async (req, res) => {
   try {
