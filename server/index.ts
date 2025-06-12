@@ -5,11 +5,18 @@ import { insertBusinessSchema, insertCampaignSchema, insertCampaignMetricsSchema
 import { z } from "zod";
 import path from "path";
 import { fileURLToPath } from 'url';
+import OpenAI from "openai";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
+// Initialize OpenAI client
+// the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+const openai = new OpenAI({ 
+  apiKey: process.env.OPENAI_API_KEY 
+});
 
 // Middleware
 app.use(express.json());
@@ -399,6 +406,136 @@ app.post("/api/metrics", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
+// AI-powered ad copy generation endpoint
+app.post("/api/content/generate-copy", async (req, res) => {
+  try {
+    const { businessId, campaignGoal, keyMessage, tone, ctaStyle, selectedChannels } = req.body;
+    
+    if (!businessId || !campaignGoal || !keyMessage || !tone || !ctaStyle) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    // Get business profile for context
+    const business = await storage.getBusiness(businessId);
+    if (!business) {
+      return res.status(404).json({ message: "Business not found" });
+    }
+
+    // Generate AI-powered ad copy variations
+    const copyVariations = await generateAdCopyVariations({
+      business,
+      campaignGoal,
+      keyMessage,
+      tone,
+      ctaStyle,
+      selectedChannels: selectedChannels || []
+    });
+
+    res.json({ variations: copyVariations });
+  } catch (error) {
+    console.error("Error generating ad copy:", error);
+    res.status(500).json({ message: "Failed to generate ad copy" });
+  }
+});
+
+// AI ad copy generation function
+async function generateAdCopyVariations(params: {
+  business: any;
+  campaignGoal: string;
+  keyMessage: string;
+  tone: string;
+  ctaStyle: string;
+  selectedChannels: string[];
+}) {
+  const { business, campaignGoal, keyMessage, tone, ctaStyle, selectedChannels } = params;
+
+  // Build context-aware prompt
+  const businessContext = `
+Business: ${business.name}
+Industry: ${business.industry}
+Location: ${business.city}
+Description: ${business.description || 'Local business'}
+Target Audience: ${business.customerDescription || 'Local customers'}
+Service Type: ${business.serviceAtLocation ? 'In-store visits' : business.serviceAtCustomerLocation ? 'On-site service' : 'Mixed service model'}
+`;
+
+  const channelContext = selectedChannels.length > 0 
+    ? `Selected Marketing Channels: ${selectedChannels.join(', ')}`
+    : '';
+
+  const prompt = `Create 3 distinct advertising copy variations for a local business campaign.
+
+${businessContext}
+
+Campaign Details:
+- Goal: ${campaignGoal}
+- Key Message: ${keyMessage}
+- Tone: ${tone}
+- Call-to-Action Style: ${ctaStyle}
+${channelContext}
+
+Requirements:
+- Each variation should be unique and compelling
+- Include attention-grabbing headlines
+- Body text should be concise but persuasive
+- Include strong call-to-action based on the specified style
+- Tailor language to the business's local market
+- Consider the target audience and industry context
+- Keep each variation under 150 words total
+
+Response format (JSON):
+{
+  "variations": [
+    {
+      "id": 1,
+      "headline": "Compelling headline here",
+      "body": "Persuasive body text that connects with local customers...",
+      "cta": "Strong call-to-action",
+      "style": "Brief description of the approach used"
+    },
+    {
+      "id": 2,
+      "headline": "Different headline approach",
+      "body": "Alternative body text with different angle...",
+      "cta": "Different call-to-action",
+      "style": "Brief description of the approach used"
+    },
+    {
+      "id": 3,
+      "headline": "Third unique headline",
+      "body": "Third variation with unique messaging...",
+      "cta": "Third call-to-action variation",
+      "style": "Brief description of the approach used"
+    }
+  ]
+}`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: "You are an expert copywriter specializing in local business advertising. Create compelling, authentic ad copy that resonates with local audiences and drives action."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.8,
+      max_tokens: 1500
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || '{}');
+    return result.variations || [];
+  } catch (error) {
+    console.error("OpenAI API error:", error);
+    throw new Error("Failed to generate ad copy variations");
+  }
+}
 
 // Channel recommendation algorithm
 function generateChannelRecommendations(business: any) {
