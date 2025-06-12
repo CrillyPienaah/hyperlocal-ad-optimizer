@@ -164,6 +164,54 @@ app.put("/api/business-profile/:id/audience", async (req, res) => {
   }
 });
 
+// Business profile budget route for step 4 onboarding
+app.put("/api/business-profile/:id/budget", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const validatedData = budgetProfileSchema.parse(req.body);
+    
+    // Mark onboarding as complete when budget is set
+    const storageData = {
+      ...validatedData,
+      isOnboardingComplete: true,
+    };
+    
+    const business = await storage.updateBusiness(id, storageData);
+    if (!business) {
+      return res.status(404).json({ message: "Business not found" });
+    }
+    
+    res.json(business);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ 
+        message: "Validation failed", 
+        errors: error.errors.map(err => ({
+          field: err.path.join('.'),
+          message: err.message
+        }))
+      });
+    }
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// Get complete business profile
+app.get("/api/business-profile/:id", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const business = await storage.getBusiness(id);
+    
+    if (!business) {
+      return res.status(404).json({ message: "Business not found" });
+    }
+    
+    res.json(business);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 // Campaign routes
 app.get("/api/campaigns/business/:businessId", async (req, res) => {
   try {
