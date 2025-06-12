@@ -18,6 +18,7 @@ const navigation = [
   { name: "Budget", href: "/budget", icon: DollarSign },
   { name: "Analytics", href: "/analytics", icon: TrendingUp },
   { name: "AI Copy Generator", href: "/ad-copy-generator", icon: Sparkles },
+  { name: "Channel Planner", href: "/channel-planner", icon: Target },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 

@@ -658,119 +658,323 @@ function getIndustryEmojis(industry: string): string[] {
   return industryEmojiMap[industry] || ['✨', '💡', '🚀', '💪', '🌟', '🎯'];
 }
 
-// Channel recommendation algorithm
+// Enhanced channel recommendation with detailed analytics
 function generateChannelRecommendations(business: any) {
   const channels = [
     {
       id: 'google-ads',
       name: 'Google Ads',
-      type: 'digital',
-      description: 'Search and display advertising on Google network',
+      description: 'Search and display advertising on Google\'s network',
       costTier: 'medium',
-      estimatedReach: '50,000-100,000',
-      monthlyBudget: '$500-2000',
-      benefits: ['High intent traffic', 'Local targeting', 'Immediate results']
+      estimatedCost: '$300-800/month',
+      expectedReach: '10,000-25,000 impressions',
+      difficulty: 'Medium',
+      timeToSee: '1-2 weeks',
+      pros: [
+        'High-intent customers actively searching',
+        'Measurable ROI and detailed analytics',
+        'Local targeting with location extensions',
+        'Control over budget and bidding'
+      ],
+      cons: [
+        'Requires keyword research and optimization',
+        'Can be competitive in popular industries',
+        'Learning curve for campaign management'
+      ],
+      recommendedFor: ['services', 'retail', 'high-intent purchases'],
+      icon: 'google-ads'
     },
     {
-      id: 'facebook-instagram',
+      id: 'facebook-ads',
       name: 'Facebook & Instagram Ads',
-      type: 'digital',
-      description: 'Social media advertising with detailed audience targeting',
+      description: 'Social media advertising across Meta\'s platforms',
       costTier: 'low',
-      estimatedReach: '25,000-75,000',
-      monthlyBudget: '$300-1500',
-      benefits: ['Visual storytelling', 'Demographic targeting', 'Cost effective']
+      estimatedCost: '$200-600/month',
+      expectedReach: '15,000-40,000 impressions',
+      difficulty: 'Easy',
+      timeToSee: '3-7 days',
+      pros: [
+        'Detailed demographic and interest targeting',
+        'Visual storytelling with photos and videos',
+        'Strong local community engagement',
+        'Cost-effective for brand awareness'
+      ],
+      cons: [
+        'Lower purchase intent than search ads',
+        'Requires engaging visual content',
+        'Algorithm changes can affect reach'
+      ],
+      recommendedFor: ['food-beverage', 'retail', 'community-focused'],
+      icon: 'facebook-ads'
     },
     {
-      id: 'local-print',
-      name: 'Local Print Media',
-      type: 'print',
-      description: 'Newspapers, magazines, and local publications',
+      id: 'instagram-ads',
+      name: 'Instagram Advertising',
+      description: 'Visual advertising on Instagram platform',
+      costTier: 'low',
+      estimatedCost: '$150-500/month',
+      expectedReach: '12,000-30,000 impressions',
+      difficulty: 'Easy',
+      timeToSee: '2-5 days',
+      pros: [
+        'Highly visual platform perfect for products',
+        'Strong engagement with younger demographics',
+        'Stories and Reels for creative content',
+        'Influencer collaboration opportunities'
+      ],
+      cons: [
+        'Requires high-quality visual content',
+        'Younger audience may not fit all businesses',
+        'Limited text in ad creatives'
+      ],
+      recommendedFor: ['beauty', 'food-beverage', 'lifestyle'],
+      icon: 'instagram-ads'
+    },
+    {
+      id: 'linkedin-ads',
+      name: 'LinkedIn Advertising',
+      description: 'Professional network advertising for B2B targeting',
+      costTier: 'high',
+      estimatedCost: '$500-1500/month',
+      expectedReach: '5,000-15,000 impressions',
+      difficulty: 'Hard',
+      timeToSee: '2-4 weeks',
+      pros: [
+        'Professional audience with higher income',
+        'Precise job title and industry targeting',
+        'B2B lead generation capabilities',
+        'Decision-maker reach'
+      ],
+      cons: [
+        'Higher cost per click than other platforms',
+        'Limited effectiveness for B2C businesses',
+        'Professional content requirements'
+      ],
+      recommendedFor: ['services', 'B2B', 'professional-services'],
+      icon: 'linkedin-ads'
+    },
+    {
+      id: 'local-radio',
+      name: 'Local Radio Advertising',
+      description: 'Traditional radio spots on local stations',
       costTier: 'medium',
-      estimatedReach: '10,000-30,000',
-      monthlyBudget: '$400-1200',
-      benefits: ['Local credibility', 'Older demographics', 'Tangible presence']
+      estimatedCost: '$400-1200/month',
+      expectedReach: '20,000-60,000 listeners',
+      difficulty: 'Medium',
+      timeToSee: '2-6 weeks',
+      pros: [
+        'Broad local market coverage',
+        'Trusted medium with loyal listeners',
+        'Drive-time audience engagement',
+        'Audio branding opportunities'
+      ],
+      cons: [
+        'Difficult to track direct ROI',
+        'Less precise targeting than digital',
+        'Production costs for quality ads'
+      ],
+      recommendedFor: ['automotive', 'healthcare', 'home-services'],
+      icon: 'local-radio'
     },
     {
-      id: 'yelp-ads',
-      name: 'Yelp Advertising',
-      type: 'digital',
-      description: 'Promoted listings and ads on Yelp platform',
+      id: 'email-marketing',
+      name: 'Email Marketing',
+      description: 'Direct email campaigns to customer lists',
       costTier: 'low',
-      estimatedReach: '5,000-15,000',
-      monthlyBudget: '$200-800',
-      benefits: ['Local discovery', 'Review visibility', 'Mobile friendly']
+      estimatedCost: '$50-200/month',
+      expectedReach: '500-5,000 emails',
+      difficulty: 'Easy',
+      timeToSee: '1-3 days',
+      pros: [
+        'Direct communication with customers',
+        'High ROI when done correctly',
+        'Personalization and automation options',
+        'Builds long-term customer relationships'
+      ],
+      cons: [
+        'Requires building an email list',
+        'Spam filters can limit delivery',
+        'Need compelling content to avoid unsubscribes'
+      ],
+      recommendedFor: ['retail', 'services', 'repeat-customers'],
+      icon: 'email-marketing'
     },
     {
-      id: 'radio-sponsorship',
-      name: 'Local Radio Sponsorship',
-      type: 'traditional',
-      description: 'Sponsorships and ads on local radio stations',
+      id: 'social-media',
+      name: 'Organic Social Media',
+      description: 'Building community through regular social posts',
+      costTier: 'low',
+      estimatedCost: '$100-400/month',
+      expectedReach: '1,000-10,000 followers',
+      difficulty: 'Medium',
+      timeToSee: '4-12 weeks',
+      pros: [
+        'Cost-effective brand building',
+        'Direct customer engagement',
+        'User-generated content opportunities',
+        'Community building and loyalty'
+      ],
+      cons: [
+        'Requires consistent content creation',
+        'Organic reach is declining',
+        'Time-intensive to build following'
+      ],
+      recommendedFor: ['all-businesses', 'community-focused', 'brand-building'],
+      icon: 'social-media'
+    },
+    {
+      id: 'seo',
+      name: 'Search Engine Optimization',
+      description: 'Improving organic search visibility and rankings',
       costTier: 'medium',
-      estimatedReach: '20,000-50,000',
-      monthlyBudget: '$600-2000',
-      benefits: ['Drive time exposure', 'Local community', 'Audio branding']
-    },
-    {
-      id: 'community-events',
-      name: 'Community Event Sponsorship',
-      type: 'offline',
-      description: 'Sponsor local events, festivals, and community gatherings',
-      costTier: 'low',
-      estimatedReach: '1,000-5,000',
-      monthlyBudget: '$100-500',
-      benefits: ['Community goodwill', 'Direct engagement', 'Brand awareness']
+      estimatedCost: '$300-800/month',
+      expectedReach: '2,000-15,000 monthly visits',
+      difficulty: 'Hard',
+      timeToSee: '3-6 months',
+      pros: [
+        'Long-term sustainable traffic',
+        'High-quality, intent-driven visitors',
+        'Builds authority and credibility',
+        'Cost-effective once established'
+      ],
+      cons: [
+        'Takes months to see significant results',
+        'Requires technical knowledge',
+        'Algorithm changes can affect rankings'
+      ],
+      recommendedFor: ['services', 'content-rich', 'long-term-strategy'],
+      icon: 'seo'
     }
   ];
 
-  // Rule-based recommendation logic
+  // Enhanced scoring algorithm
   const recommendations = channels.map(channel => {
     let score = 0;
     let rationale = [];
 
-    // Industry-based scoring
-    if (business.industry === 'food-beverage') {
-      if (channel.id === 'facebook-instagram') {
-        score += 30;
-        rationale.push('Visual platform perfect for showcasing food and atmosphere');
+    // Industry-specific scoring with detailed logic
+    const industryScoring = {
+      'food-beverage': {
+        'facebook-ads': { score: 35, reason: 'Visual platform perfect for showcasing food, atmosphere, and customer experiences' },
+        'instagram-ads': { score: 30, reason: 'Highly visual content drives appetite appeal and location visits' },
+        'social-media': { score: 25, reason: 'Build community around food culture and customer loyalty' },
+        'email-marketing': { score: 20, reason: 'Effective for promotions, events, and repeat customer engagement' }
+      },
+      'retail': {
+        'google-ads': { score: 35, reason: 'Captures high-intent shoppers actively searching for products' },
+        'facebook-ads': { score: 30, reason: 'Excellent for product showcasing and driving store visits' },
+        'instagram-ads': { score: 28, reason: 'Visual platform ideal for product discovery and lifestyle marketing' },
+        'email-marketing': { score: 25, reason: 'Drive repeat purchases and announce new inventory' }
+      },
+      'services': {
+        'google-ads': { score: 40, reason: 'Service businesses are discovered primarily through search queries' },
+        'seo': { score: 30, reason: 'Long-term strategy for establishing service authority and expertise' },
+        'linkedin-ads': { score: 25, reason: 'Professional services benefit from B2B networking platform' },
+        'local-radio': { score: 20, reason: 'Builds trust and credibility for local service providers' }
+      },
+      'healthcare': {
+        'google-ads': { score: 35, reason: 'Patients search for healthcare providers and services online' },
+        'seo': { score: 30, reason: 'Establish medical authority and attract organic patient traffic' },
+        'local-radio': { score: 25, reason: 'Trusted medium for healthcare advertising in local markets' },
+        'social-media': { score: 20, reason: 'Build patient education and community health awareness' }
       }
-      if (channel.id === 'yelp-ads') {
-        score += 25;
-        rationale.push('Customers actively search for restaurants on Yelp');
-      }
-      if (channel.id === 'community-events') {
-        score += 20;
-        rationale.push('Local food businesses benefit from community presence');
-      }
+    };
+
+    const industryRecs = industryScoring[business.industry] || {};
+    if (industryRecs[channel.id]) {
+      score += industryRecs[channel.id].score;
+      rationale.push(industryRecs[channel.id].reason);
     }
 
-    if (business.industry === 'retail') {
-      if (channel.id === 'google-ads') {
-        score += 30;
-        rationale.push('Captures high-intent shoppers searching for products');
-      }
-      if (channel.id === 'facebook-instagram') {
-        score += 25;
-        rationale.push('Great for showcasing products and driving store visits');
-      }
-    }
-
-    if (business.industry === 'services') {
-      if (channel.id === 'google-ads') {
-        score += 35;
-        rationale.push('Service businesses get discovered through search');
-      }
-      if (channel.id === 'local-print') {
-        score += 20;
-        rationale.push('Local services benefit from trusted print publications');
-      }
-    }
-
-    // Budget-based scoring
-    const budgetTier = business.budgetTier || 'medium';
-    if (budgetTier === 'low' && channel.costTier === 'low') {
+    // Budget alignment scoring
+    const budgetMap = {
+      '50-200': 'low',
+      '201-500': 'low-medium', 
+      '501-1000': 'medium',
+      '1000+': 'high'
+    };
+    
+    const userBudgetTier = budgetMap[business.budgetTier] || 'medium';
+    
+    if (userBudgetTier === 'low' && channel.costTier === 'low') {
+      score += 20;
+      rationale.push('Fits perfectly within your budget constraints while delivering strong ROI');
+    } else if (userBudgetTier === 'medium' && (channel.costTier === 'low' || channel.costTier === 'medium')) {
       score += 15;
-      rationale.push('Fits your budget-conscious approach');
+      rationale.push('Good value proposition for your budget range with scalable options');
+    } else if (userBudgetTier === 'high') {
+      score += 10;
+      rationale.push('Premium channel option with maximum reach and targeting capabilities');
+    }
+
+    // Service model scoring
+    if (business.serviceAtLocation && ['facebook-ads', 'instagram-ads', 'google-ads'].includes(channel.id)) {
+      score += 15;
+      rationale.push('Excellent for driving foot traffic to your physical location');
+    }
+
+    if (business.serviceAtCustomerLocation && ['google-ads', 'seo', 'local-radio'].includes(channel.id)) {
+      score += 15;
+      rationale.push('Ideal for reaching customers who need on-site or mobile services');
+    }
+
+    // Target audience alignment
+    const ageGroups = business.targetAgeGroups ? JSON.parse(business.targetAgeGroups) : [];
+    if (ageGroups.includes('18-24') || ageGroups.includes('25-34')) {
+      if (['instagram-ads', 'social-media'].includes(channel.id)) {
+        score += 15;
+        rationale.push('Strong alignment with younger demographic preferences and platform usage');
+      }
+    }
+
+    if (ageGroups.includes('35-44') || ageGroups.includes('45-54')) {
+      if (['facebook-ads', 'email-marketing', 'google-ads'].includes(channel.id)) {
+        score += 12;
+        rationale.push('Excellent reach among established professionals and decision-makers');
+      }
+    }
+
+    // Community involvement bonus
+    if (business.communityInvolvement === 'high' && ['social-media', 'local-radio', 'email-marketing'].includes(channel.id)) {
+      score += 10;
+      rationale.push('Leverages your strong community presence and local relationships');
+    }
+
+    return {
+      ...channel,
+      suitabilityScore: Math.min(100, Math.max(0, score)),
+      rationale: rationale.slice(0, 3) // Top 3 reasons
+    };
+  }).sort((a, b) => b.suitabilityScore - a.suitabilityScore);
+
+  // Categorize recommendations
+  const primaryChannels = recommendations.filter(ch => ch.suitabilityScore >= 70).slice(0, 3);
+  const secondaryChannels = recommendations.filter(ch => ch.suitabilityScore >= 40 && ch.suitabilityScore < 70);
+  const budgetOptimized = recommendations
+    .filter(ch => ch.costTier === 'low' || ch.costTier === 'medium')
+    .sort((a, b) => (b.suitabilityScore / getCostScore(b.costTier)) - (a.suitabilityScore / getCostScore(a.costTier)))
+    .slice(0, 3);
+
+  return {
+    primaryChannels,
+    secondaryChannels,
+    budgetOptimized,
+    totalRecommendations: recommendations.length,
+    businessProfile: {
+      industry: business.industry,
+      budget: business.budgetTier,
+      serviceModel: {
+        atLocation: business.serviceAtLocation,
+        atCustomer: business.serviceAtCustomerLocation
+      }
+    }
+  };
+}
+
+function getCostScore(costTier: string): number {
+  const scores = { 'low': 1, 'medium': 2, 'high': 3 };
+  return scores[costTier as keyof typeof scores] || 2;
+}
     }
     if (budgetTier === 'medium' && (channel.costTier === 'low' || channel.costTier === 'medium')) {
       score += 10;
