@@ -9,6 +9,7 @@ import Targeting from "@/pages/targeting";
 import Budget from "@/pages/budget";
 import Analytics from "@/pages/analytics";
 import Settings from "@/pages/settings";
+import Onboarding from "@/pages/onboarding";
 import NotFound from "@/pages/not-found";
 import Sidebar from "@/components/layout/sidebar";
 
@@ -24,6 +25,7 @@ function Router() {
           <Route path="/budget" component={Budget} />
           <Route path="/analytics" component={Analytics} />
           <Route path="/settings" component={Settings} />
+          <Route path="/onboarding" component={Onboarding} />
           <Route component={NotFound} />
         </Switch>
       </main>
