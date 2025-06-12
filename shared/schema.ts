@@ -57,13 +57,10 @@ export const campaignMetrics = pgTable("campaign_metrics", {
   date: timestamp("date").defaultNow().notNull(),
 });
 
-export const insertBusinessSchema = createInsertSchema(businesses, {
-  name: z.string().min(1, "Business name is required"),
-  email: z.string().email("Invalid email address"),
-}).omit({
+export const insertBusinessSchema = createInsertSchema(businesses).omit({
   id: true,
   createdAt: true,
-});
+} as const);
 
 export const businessProfileSchema = insertBusinessSchema.extend({
   businessType: z.enum(["restaurant", "retail", "service", "healthcare", "fitness", "beauty", "professional", "education", "entertainment", "other"]),
@@ -119,21 +116,16 @@ export const budgetProfileSchema = z.object({
   }),
 });
 
-export const insertCampaignSchema = createInsertSchema(campaigns, {
-  name: z.string().min(1, "Campaign name is required"),
-}).omit({
+export const insertCampaignSchema = createInsertSchema(campaigns).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
-});
+} as const);
 
-export const insertCampaignMetricsSchema = createInsertSchema(campaignMetrics, {
-  impressions: z.number().min(0),
-  clicks: z.number().min(0),
-}).omit({
+export const insertCampaignMetricsSchema = createInsertSchema(campaignMetrics).omit({
   id: true,
   date: true,
-});
+} as const);
 
 export type InsertBusiness = z.infer<typeof insertBusinessSchema>;
 export type Business = typeof businesses.$inferSelect;

@@ -1,4 +1,4 @@
-import { businesses, campaigns, campaignMetrics, type Business, type InsertBusiness, type Campaign, type InsertCampaign, type CampaignMetrics, type InsertCampaignMetrics } from "@shared/schema";
+import { businesses, campaigns, campaignMetrics, type Business, type InsertBusiness, type Campaign, type InsertCampaign, type CampaignMetrics, type InsertCampaignMetrics } from "../shared/schema";
 
 export interface IStorage {
   // Business operations

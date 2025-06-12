@@ -1,7 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { createServer } from "http";
 import { storage } from "./storage";
-import { insertBusinessSchema, insertCampaignSchema, insertCampaignMetricsSchema, businessProfileSchema, locationProfileSchema, audienceProfileSchema, budgetProfileSchema } from "@shared/schema";
+import { insertBusinessSchema, insertCampaignSchema, insertCampaignMetricsSchema, businessProfileSchema, locationProfileSchema, audienceProfileSchema, budgetProfileSchema } from "../shared/schema";
 import { z } from "zod";
 import path from "path";
 import { fileURLToPath } from 'url';
