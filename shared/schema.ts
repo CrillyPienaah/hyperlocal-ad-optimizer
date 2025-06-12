@@ -9,6 +9,10 @@ export const businesses = pgTable("businesses", {
   address: text("address").notNull(),
   phone: text("phone"),
   industry: text("industry").notNull(),
+  businessType: text("business_type").notNull(),
+  customBusinessType: text("custom_business_type"),
+  description: text("description"),
+  isOnboardingComplete: boolean("is_onboarding_complete").notNull().default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -40,6 +44,20 @@ export const campaignMetrics = pgTable("campaign_metrics", {
 export const insertBusinessSchema = createInsertSchema(businesses).omit({
   id: true,
   createdAt: true,
+});
+
+export const businessProfileSchema = insertBusinessSchema.extend({
+  businessType: z.enum(["restaurant", "retail", "service", "healthcare", "fitness", "beauty", "professional", "education", "entertainment", "other"]),
+  customBusinessType: z.string().optional(),
+  description: z.string().min(10, "Description must be at least 10 characters").max(500, "Description must be less than 500 characters"),
+}).refine((data) => {
+  if (data.businessType === "other" && !data.customBusinessType) {
+    return false;
+  }
+  return true;
+}, {
+  message: "Custom business type is required when 'Other' is selected",
+  path: ["customBusinessType"],
 });
 
 export const insertCampaignSchema = createInsertSchema(campaigns).omit({

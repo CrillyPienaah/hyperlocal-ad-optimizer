@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertBusinessSchema, insertCampaignSchema, insertCampaignMetricsSchema } from "@shared/schema";
+import { insertBusinessSchema, insertCampaignSchema, insertCampaignMetricsSchema, businessProfileSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -28,6 +28,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Invalid data", errors: error.errors });
       }
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Business profile route for onboarding
+  app.post("/api/business-profile", async (req, res) => {
+    try {
+      const validatedData = businessProfileSchema.parse(req.body);
+      const business = await storage.createBusiness(validatedData);
+      res.status(201).json(business);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: "Validation failed", 
+          errors: error.errors.map(err => ({
+            field: err.path.join('.'),
+            message: err.message
+          }))
+        });
+      }
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.patch("/api/businesses/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updates = req.body;
+      const business = await storage.updateBusiness(id, updates);
+      if (!business) {
+        return res.status(404).json({ message: "Business not found" });
+      }
+      res.json(business);
+    } catch (error) {
       res.status(500).json({ message: "Internal server error" });
     }
   });

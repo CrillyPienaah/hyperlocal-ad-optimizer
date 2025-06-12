@@ -5,6 +5,7 @@ export interface IStorage {
   getBusiness(id: number): Promise<Business | undefined>;
   getBusinessByEmail(email: string): Promise<Business | undefined>;
   createBusiness(business: InsertBusiness): Promise<Business>;
+  updateBusiness(id: number, updates: Partial<InsertBusiness>): Promise<Business | undefined>;
   
   // Campaign operations
   getCampaign(id: number): Promise<Campaign | undefined>;
@@ -53,6 +54,10 @@ export class MemStorage implements IStorage {
       address: "123 Main Street, Downtown",
       phone: "(555) 123-4567",
       industry: "Food & Beverage",
+      businessType: "restaurant",
+      customBusinessType: null,
+      description: "A cozy neighborhood coffee shop serving premium coffee, fresh pastries, and light meals. We focus on creating a welcoming community space for locals to work, meet, and relax.",
+      isOnboardingComplete: true,
       createdAt: new Date(),
     };
     this.businesses.set(1, demoBusiness);
@@ -138,10 +143,30 @@ export class MemStorage implements IStorage {
     const business: Business = {
       ...insertBusiness,
       id,
+      phone: insertBusiness.phone || null,
+      customBusinessType: insertBusiness.customBusinessType || null,
+      description: insertBusiness.description || null,
+      isOnboardingComplete: insertBusiness.isOnboardingComplete || false,
       createdAt: new Date(),
     };
     this.businesses.set(id, business);
     return business;
+  }
+
+  async updateBusiness(id: number, updates: Partial<InsertBusiness>): Promise<Business | undefined> {
+    const business = this.businesses.get(id);
+    if (!business) return undefined;
+
+    const updatedBusiness: Business = {
+      ...business,
+      ...updates,
+      phone: updates.phone !== undefined ? updates.phone : business.phone,
+      customBusinessType: updates.customBusinessType !== undefined ? updates.customBusinessType : business.customBusinessType,
+      description: updates.description !== undefined ? updates.description : business.description,
+      isOnboardingComplete: updates.isOnboardingComplete !== undefined ? updates.isOnboardingComplete : business.isOnboardingComplete,
+    };
+    this.businesses.set(id, updatedBusiness);
+    return updatedBusiness;
   }
 
   async getCampaign(id: number): Promise<Campaign | undefined> {
@@ -157,6 +182,8 @@ export class MemStorage implements IStorage {
     const campaign: Campaign = {
       ...insertCampaign,
       id,
+      status: insertCampaign.status || "active",
+      adContent: insertCampaign.adContent || null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -190,6 +217,9 @@ export class MemStorage implements IStorage {
     const metrics: CampaignMetrics = {
       ...insertMetrics,
       id,
+      impressions: insertMetrics.impressions || 0,
+      clicks: insertMetrics.clicks || 0,
+      spend: insertMetrics.spend || "0.00",
       date: new Date(),
     };
     this.campaignMetrics.set(id, metrics);
