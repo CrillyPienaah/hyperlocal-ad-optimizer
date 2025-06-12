@@ -204,11 +204,13 @@ app.post("/api/metrics", async (req, res) => {
 });
 
 // Serve static files
-app.use(express.static(path.join(__dirname, '../client/dist')));
+const staticPath = path.resolve(__dirname, '../client/dist');
+app.use(express.static(staticPath));
 
 // Catch-all handler for SPA
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+  if (req.path.startsWith('/api')) return;
+  res.sendFile(path.resolve(staticPath, 'index.html'));
 });
 
 // Error handler
