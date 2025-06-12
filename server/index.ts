@@ -880,10 +880,11 @@ function generateChannelRecommendations(business: any) {
       }
     };
 
-    const industryRecs = industryScoring[business.industry] || {};
-    if (industryRecs[channel.id]) {
-      score += industryRecs[channel.id].score;
-      rationale.push(industryRecs[channel.id].reason);
+    const industryRecs = (industryScoring as any)[business.industry] || {};
+    const channelRec = industryRecs[channel.id];
+    if (channelRec) {
+      score += (channelRec as any).score;
+      rationale.push((channelRec as any).reason);
     }
 
     // Budget alignment scoring
@@ -894,7 +895,7 @@ function generateChannelRecommendations(business: any) {
       '1000+': 'high'
     };
     
-    const userBudgetTier = budgetMap[business.budgetTier] || 'medium';
+    const userBudgetTier = budgetMap[business.budgetTier as keyof typeof budgetMap] || 'medium';
     
     if (userBudgetTier === 'low' && channel.costTier === 'low') {
       score += 20;
@@ -943,11 +944,10 @@ function generateChannelRecommendations(business: any) {
     return {
       ...channel,
       suitabilityScore: Math.min(100, Math.max(0, score)),
-      rationale: rationale.slice(0, 3) // Top 3 reasons
+      rationale: rationale.slice(0, 3)
     };
   }).sort((a, b) => b.suitabilityScore - a.suitabilityScore);
 
-  // Categorize recommendations
   const primaryChannels = recommendations.filter(ch => ch.suitabilityScore >= 70).slice(0, 3);
   const secondaryChannels = recommendations.filter(ch => ch.suitabilityScore >= 40 && ch.suitabilityScore < 70);
   const budgetOptimized = recommendations
@@ -959,104 +959,13 @@ function generateChannelRecommendations(business: any) {
     primaryChannels,
     secondaryChannels,
     budgetOptimized,
-    totalRecommendations: recommendations.length,
-    businessProfile: {
-      industry: business.industry,
-      budget: business.budgetTier,
-      serviceModel: {
-        atLocation: business.serviceAtLocation,
-        atCustomer: business.serviceAtCustomerLocation
-      }
-    }
+    totalRecommendations: recommendations.length
   };
 }
 
 function getCostScore(costTier: string): number {
   const scores = { 'low': 1, 'medium': 2, 'high': 3 };
   return scores[costTier as keyof typeof scores] || 2;
-}
-    }
-    if (budgetTier === 'medium' && (channel.costTier === 'low' || channel.costTier === 'medium')) {
-      score += 10;
-      rationale.push('Good value for your budget range');
-    }
-    if (budgetTier === 'high') {
-      score += 5;
-      rationale.push('Premium option with maximum reach');
-    }
-
-    // Location and service area scoring
-    if (business.serviceAtLocation && channel.id === 'yelp-ads') {
-      score += 15;
-      rationale.push('Perfect for businesses where customers visit your location');
-    }
-
-    if (business.serviceAtCustomerLocation && channel.id === 'google-ads') {
-      score += 15;
-      rationale.push('Ideal for reaching customers who need on-site services');
-    }
-
-    // Marketing goal scoring
-    if (business.marketingGoal === 'increase-foot-traffic') {
-      if (['yelp-ads', 'facebook-instagram', 'community-events'].includes(channel.id)) {
-        score += 20;
-        rationale.push('Excellent for driving physical store visits');
-      }
-    }
-
-    if (business.marketingGoal === 'build-brand-awareness') {
-      if (['facebook-instagram', 'radio-sponsorship', 'community-events'].includes(channel.id)) {
-        score += 20;
-        rationale.push('Strong brand building capabilities');
-      }
-    }
-
-    if (business.marketingGoal === 'generate-leads') {
-      if (['google-ads', 'facebook-instagram'].includes(channel.id)) {
-        score += 25;
-        rationale.push('Proven lead generation platform');
-      }
-    }
-
-    // Age demographics scoring
-    if (business.targetAgeGroups?.includes('18-24') || business.targetAgeGroups?.includes('25-34')) {
-      if (channel.id === 'facebook-instagram') {
-        score += 20;
-        rationale.push('High engagement among younger demographics');
-      }
-    }
-
-    if (business.targetAgeGroups?.includes('45-54') || business.targetAgeGroups?.includes('55-64')) {
-      if (['local-print', 'radio-sponsorship'].includes(channel.id)) {
-        score += 15;
-        rationale.push('Effective reach for mature demographics');
-      }
-    }
-
-    return {
-      ...channel,
-      score,
-      rationale: rationale.slice(0, 2), // Limit to top 2 reasons
-      recommended: score >= 15
-    };
-  });
-
-  // Sort by score and return top recommendations
-  return recommendations
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 5)
-    .map(rec => ({
-      id: rec.id,
-      name: rec.name,
-      type: rec.type,
-      description: rec.description,
-      costTier: rec.costTier,
-      estimatedReach: rec.estimatedReach,
-      monthlyBudget: rec.monthlyBudget,
-      benefits: rec.benefits,
-      rationale: rec.rationale,
-      recommended: rec.recommended
-    }));
 }
 
 // Channel recommendations endpoint
