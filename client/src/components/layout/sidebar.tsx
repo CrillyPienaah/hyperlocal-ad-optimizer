@@ -7,7 +7,8 @@ import {
   TrendingUp, 
   Settings,
   Target,
-  User
+  User,
+  Sparkles
 } from "lucide-react";
 
 const navigation = [
@@ -16,6 +17,7 @@ const navigation = [
   { name: "Targeting", href: "/targeting", icon: MapPin },
   { name: "Budget", href: "/budget", icon: DollarSign },
   { name: "Analytics", href: "/analytics", icon: TrendingUp },
+  { name: "AI Copy Generator", href: "/ad-copy-generator", icon: Sparkles },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 
