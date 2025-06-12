@@ -104,9 +104,9 @@ export default function BudgetSelection({ businessId, onNext, onBack }: BudgetSe
   useEffect(() => {
     if (business) {
       form.reset({
-        budgetTier: business.budgetTier || undefined,
-        budgetTimeframe: business.budgetTimeframe || "monthly",
-        marketingGoal: business.marketingGoal || undefined,
+        budgetTier: (business as any)?.budgetTier || undefined,
+        budgetTimeframe: (business as any)?.budgetTimeframe || "monthly",
+        marketingGoal: (business as any)?.marketingGoal || undefined,
       });
     }
   }, [business, form]);
@@ -114,10 +114,7 @@ export default function BudgetSelection({ businessId, onNext, onBack }: BudgetSe
   // Update budget mutation
   const updateBudgetMutation = useMutation({
     mutationFn: async (data: BudgetFormData) => {
-      const response = await apiRequest(`/api/business-profile/${businessId}/budget`, {
-        method: "PUT",
-        body: JSON.stringify(data),
-      });
+      const response = await apiRequest("PUT", `/api/business-profile/${businessId}/budget`, data);
       return response;
     },
     onSuccess: (data) => {

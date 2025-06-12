@@ -61,14 +61,14 @@ export default function LocationService({ businessId, onNext, onBack }: Location
   useEffect(() => {
     if (business) {
       form.reset({
-        city: business.city || "",
-        primaryNeighborhood: business.primaryNeighborhood || "",
-        serviceAreas: business.serviceAreas || "",
-        serviceRadius: business.serviceRadius || 5,
-        serviceAtLocation: business.serviceAtLocation || false,
-        serviceAtCustomerLocation: business.serviceAtCustomerLocation || false,
+        city: (business as any)?.city || "",
+        primaryNeighborhood: (business as any)?.primaryNeighborhood || "",
+        serviceAreas: (business as any)?.serviceAreas || "",
+        serviceRadius: (business as any)?.serviceRadius || 5,
+        serviceAtLocation: (business as any)?.serviceAtLocation || false,
+        serviceAtCustomerLocation: (business as any)?.serviceAtCustomerLocation || false,
       });
-      setRadiusValue(business.serviceRadius || 5);
+      setRadiusValue((business as any)?.serviceRadius || 5);
     }
   }, [business, form]);
 
