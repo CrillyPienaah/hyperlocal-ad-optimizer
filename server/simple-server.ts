@@ -203,15 +203,29 @@ app.post("/api/metrics", async (req, res) => {
   }
 });
 
-// Serve static files
-const staticPath = path.resolve(__dirname, '../client/dist');
-app.use(express.static(staticPath));
-
-// Catch-all handler for SPA
-app.get('*', (req, res) => {
-  if (req.path.startsWith('/api')) return;
-  res.sendFile(path.resolve(staticPath, 'index.html'));
-});
+// Serve static files based on environment
+if (process.env.NODE_ENV === 'production') {
+  const staticPath = path.resolve(__dirname, '../dist/public');
+  app.use(express.static(staticPath));
+  
+  // Catch-all handler for SPA in production
+  app.get('*', (req, res) => {
+    if (req.path.startsWith('/api')) return;
+    res.sendFile(path.resolve(staticPath, 'index.html'));
+  });
+} else {
+  // Development mode - serve client files directly
+  const clientPath = path.resolve(__dirname, '../client');
+  app.use(express.static(clientPath));
+  app.use('/src', express.static(path.resolve(clientPath, 'src')));
+  app.use('/node_modules', express.static(path.resolve(__dirname, '../node_modules')));
+  
+  // Catch-all handler for development
+  app.get('*', (req, res) => {
+    if (req.path.startsWith('/api')) return;
+    res.sendFile(path.resolve(clientPath, 'index.html'));
+  });
+}
 
 // Error handler
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
