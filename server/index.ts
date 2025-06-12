@@ -537,6 +537,127 @@ Response format (JSON):
   }
 }
 
+// AI copywriting assistant endpoint with emoji suggestions
+app.post("/api/content/copywriting-assistant", async (req, res) => {
+  try {
+    const { businessId, prompt, assistantType = "playful" } = req.body;
+    
+    if (!businessId || !prompt) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    // Get business profile for context
+    const business = await storage.getBusiness(businessId);
+    if (!business) {
+      return res.status(404).json({ message: "Business not found" });
+    }
+
+    // Generate playful assistant response with emojis
+    const assistantResponse = await generateCopywritingAssistance({
+      business,
+      prompt,
+      assistantType
+    });
+
+    res.json(assistantResponse);
+  } catch (error) {
+    console.error("Error generating copywriting assistance:", error);
+    res.status(500).json({ message: "Failed to generate copywriting assistance" });
+  }
+});
+
+// AI copywriting assistant function
+async function generateCopywritingAssistance(params: {
+  business: any;
+  prompt: string;
+  assistantType: string;
+}) {
+  const { business, prompt, assistantType } = params;
+
+  const systemPrompt = assistantType === "playful" 
+    ? `You are a playful, creative copywriting assistant who loves helping small businesses shine! You're enthusiastic, encouraging, and always sprinkle in relevant emojis to make your responses delightful. Your personality is bubbly and supportive, like a creative friend who genuinely cares about making businesses successful.
+
+Key traits:
+- Use 2-4 relevant emojis per response (not overwhelming)
+- Be encouraging and positive
+- Offer specific, actionable advice
+- Reference the business context when relevant
+- Keep responses conversational and fun
+- Suggest creative angles and fresh perspectives`
+    : `You are a professional copywriting consultant who provides expert advice with subtle emoji accents for clarity and engagement. You balance professionalism with approachability.`;
+
+  const businessContext = `
+Business: ${business.name}
+Industry: ${business.industry}
+Location: ${business.city}
+Description: ${business.description || 'Local business'}
+Target Audience: ${business.customerDescription || 'Local customers'}
+`;
+
+  const userPrompt = `${businessContext}
+
+User Request: ${prompt}
+
+Please provide helpful copywriting advice, suggestions, or improvements. If they're asking for copy ideas, provide 2-3 specific examples. If they need feedback on existing copy, give constructive suggestions with improvements.`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: systemPrompt
+        },
+        {
+          role: "user",
+          content: userPrompt
+        }
+      ],
+      temperature: 0.8,
+      max_tokens: 800
+    });
+
+    const assistantReply = response.choices[0].message.content || "";
+    
+    // Suggest emojis based on business industry and general mood emojis
+    const industryEmojis = getIndustryEmojis(business.industry);
+    const moodEmojis = ["✨", "🎉", "💡", "🚀", "💪", "👏", "🌟", "🔥", "💯", "🎯"];
+    
+    const allEmojis: string[] = [];
+    industryEmojis.forEach(emoji => allEmojis.push(emoji));
+    moodEmojis.forEach(emoji => allEmojis.push(emoji));
+    
+    const uniqueEmojis = allEmojis.filter((emoji, index) => allEmojis.indexOf(emoji) === index);
+    const emojiSuggestions = uniqueEmojis.slice(0, 12);
+
+    return {
+      response: assistantReply,
+      emojiSuggestions,
+      assistantType,
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    console.error("OpenAI API error:", error);
+    throw new Error("Failed to generate copywriting assistance");
+  }
+}
+
+// Get industry-specific emojis
+function getIndustryEmojis(industry: string): string[] {
+  const industryEmojiMap: Record<string, string[]> = {
+    'food-beverage': ['🍕', '☕', '🍰', '🥘', '🍷', '🍔', '🥗', '🍜'],
+    'retail': ['🛍️', '👕', '👠', '💎', '🛒', '🏪', '💰', '🎁'],
+    'services': ['🔧', '💼', '📞', '🏠', '🚗', '💻', '📋', '⚡'],
+    'healthcare': ['🏥', '💊', '🩺', '❤️', '🧘', '🌿', '💚', '🏃'],
+    'fitness': ['💪', '🏋️', '🧘', '🏃', '⚡', '🎯', '🔥', '💚'],
+    'beauty': ['💄', '💅', '✨', '🌸', '💆', '🧴', '💎', '🌺'],
+    'education': ['📚', '🎓', '💡', '🧠', '📝', '🏫', '⭐', '🎯'],
+    'technology': ['💻', '📱', '⚡', '🔧', '🚀', '💡', '🌐', '⚙️']
+  };
+  
+  return industryEmojiMap[industry] || ['✨', '💡', '🚀', '💪', '🌟', '🎯'];
+}
+
 // Channel recommendation algorithm
 function generateChannelRecommendations(business: any) {
   const channels = [
