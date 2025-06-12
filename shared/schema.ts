@@ -12,6 +12,13 @@ export const businesses = pgTable("businesses", {
   businessType: text("business_type").notNull(),
   customBusinessType: text("custom_business_type"),
   description: text("description"),
+  // Location fields
+  city: text("city"),
+  primaryNeighborhood: text("primary_neighborhood"),
+  serviceAreas: text("service_areas"),
+  serviceRadius: integer("service_radius"), // in kilometers
+  serviceAtLocation: boolean("service_at_location").default(false),
+  serviceAtCustomerLocation: boolean("service_at_customer_location").default(false),
   isOnboardingComplete: boolean("is_onboarding_complete").notNull().default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
@@ -58,6 +65,18 @@ export const businessProfileSchema = insertBusinessSchema.extend({
 }, {
   message: "Custom business type is required when 'Other' is selected",
   path: ["customBusinessType"],
+});
+
+export const locationProfileSchema = z.object({
+  city: z.string().min(2, "City is required").max(100, "City name too long"),
+  primaryNeighborhood: z.string().max(100, "Neighborhood name too long").optional(),
+  serviceAreas: z.string().max(500, "Service areas description too long").optional(),
+  serviceRadius: z.number().min(1, "Service radius must be at least 1km").max(50, "Service radius cannot exceed 50km"),
+  serviceAtLocation: z.boolean().default(false),
+  serviceAtCustomerLocation: z.boolean().default(false),
+}).refine(data => data.serviceAtLocation || data.serviceAtCustomerLocation, {
+  message: "At least one service method must be selected",
+  path: ["serviceAtLocation"],
 });
 
 export const insertCampaignSchema = createInsertSchema(campaigns).omit({
