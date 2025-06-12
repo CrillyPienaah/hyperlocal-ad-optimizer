@@ -57,7 +57,10 @@ export const campaignMetrics = pgTable("campaign_metrics", {
   date: timestamp("date").defaultNow().notNull(),
 });
 
-export const insertBusinessSchema = createInsertSchema(businesses).omit({
+export const insertBusinessSchema = createInsertSchema(businesses, {
+  name: z.string().min(1, "Business name is required"),
+  email: z.string().email("Invalid email address"),
+}).omit({
   id: true,
   createdAt: true,
 });
@@ -116,13 +119,18 @@ export const budgetProfileSchema = z.object({
   }),
 });
 
-export const insertCampaignSchema = createInsertSchema(campaigns).omit({
+export const insertCampaignSchema = createInsertSchema(campaigns, {
+  name: z.string().min(1, "Campaign name is required"),
+}).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
 });
 
-export const insertCampaignMetricsSchema = createInsertSchema(campaignMetrics).omit({
+export const insertCampaignMetricsSchema = createInsertSchema(campaignMetrics, {
+  impressions: z.number().min(0),
+  clicks: z.number().min(0),
+}).omit({
   id: true,
   date: true,
 });

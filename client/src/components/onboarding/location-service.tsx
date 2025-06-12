@@ -75,10 +75,7 @@ export default function LocationService({ businessId, onNext, onBack }: Location
   // Update location mutation
   const updateLocationMutation = useMutation({
     mutationFn: async (data: LocationFormData) => {
-      const response = await apiRequest(`/api/business-profile/${businessId}/location`, {
-        method: "PUT",
-        body: JSON.stringify(data),
-      });
+      const response = await apiRequest("PUT", `/api/business-profile/${businessId}/location`, data);
       return response;
     },
     onSuccess: (data) => {
