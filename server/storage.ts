@@ -63,6 +63,10 @@ export class MemStorage implements IStorage {
       serviceRadius: 5,
       serviceAtLocation: true,
       serviceAtCustomerLocation: false,
+      customerDescription: "Young professionals, remote workers, students, and local residents who appreciate quality coffee and a comfortable workspace atmosphere.",
+      targetAgeGroups: JSON.stringify(["25-34", "35-44", "18-24"]),
+      customerInterests: JSON.stringify(["coffee", "technology", "productivity", "community", "sustainability"]),
+      communityInvolvement: "high",
       isOnboardingComplete: true,
       createdAt: new Date(),
     };
@@ -158,6 +162,10 @@ export class MemStorage implements IStorage {
       serviceRadius: insertBusiness.serviceRadius || null,
       serviceAtLocation: insertBusiness.serviceAtLocation || false,
       serviceAtCustomerLocation: insertBusiness.serviceAtCustomerLocation || false,
+      customerDescription: insertBusiness.customerDescription || null,
+      targetAgeGroups: insertBusiness.targetAgeGroups || null,
+      customerInterests: insertBusiness.customerInterests || null,
+      communityInvolvement: insertBusiness.communityInvolvement || null,
       isOnboardingComplete: insertBusiness.isOnboardingComplete || false,
       createdAt: new Date(),
     };
@@ -181,6 +189,10 @@ export class MemStorage implements IStorage {
       serviceRadius: updates.serviceRadius !== undefined ? updates.serviceRadius : business.serviceRadius,
       serviceAtLocation: updates.serviceAtLocation !== undefined ? updates.serviceAtLocation : business.serviceAtLocation,
       serviceAtCustomerLocation: updates.serviceAtCustomerLocation !== undefined ? updates.serviceAtCustomerLocation : business.serviceAtCustomerLocation,
+      customerDescription: updates.customerDescription !== undefined ? updates.customerDescription : business.customerDescription,
+      targetAgeGroups: updates.targetAgeGroups !== undefined ? updates.targetAgeGroups : business.targetAgeGroups,
+      customerInterests: updates.customerInterests !== undefined ? updates.customerInterests : business.customerInterests,
+      communityInvolvement: updates.communityInvolvement !== undefined ? updates.communityInvolvement : business.communityInvolvement,
       isOnboardingComplete: updates.isOnboardingComplete !== undefined ? updates.isOnboardingComplete : business.isOnboardingComplete,
     };
     this.businesses.set(id, updatedBusiness);

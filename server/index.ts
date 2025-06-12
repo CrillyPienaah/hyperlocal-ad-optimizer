@@ -1,7 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { createServer } from "http";
 import { storage } from "./storage";
-import { insertBusinessSchema, insertCampaignSchema, insertCampaignMetricsSchema, businessProfileSchema, locationProfileSchema } from "@shared/schema";
+import { insertBusinessSchema, insertCampaignSchema, insertCampaignMetricsSchema, businessProfileSchema, locationProfileSchema, audienceProfileSchema } from "@shared/schema";
 import { z } from "zod";
 import path from "path";
 import { fileURLToPath } from 'url';
@@ -112,6 +112,39 @@ app.put("/api/business-profile/:id/location", async (req, res) => {
     const validatedData = locationProfileSchema.parse(req.body);
     
     const business = await storage.updateBusiness(id, validatedData);
+    if (!business) {
+      return res.status(404).json({ message: "Business not found" });
+    }
+    
+    res.json(business);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ 
+        message: "Validation failed", 
+        errors: error.errors.map(err => ({
+          field: err.path.join('.'),
+          message: err.message
+        }))
+      });
+    }
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// Business profile audience route for step 3 onboarding
+app.put("/api/business-profile/:id/audience", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const validatedData = audienceProfileSchema.parse(req.body);
+    
+    // Convert arrays to JSON strings for storage
+    const storageData = {
+      ...validatedData,
+      targetAgeGroups: JSON.stringify(validatedData.targetAgeGroups),
+      customerInterests: JSON.stringify(validatedData.customerInterests),
+    };
+    
+    const business = await storage.updateBusiness(id, storageData);
     if (!business) {
       return res.status(404).json({ message: "Business not found" });
     }

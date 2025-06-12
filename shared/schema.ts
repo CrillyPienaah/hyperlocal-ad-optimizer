@@ -19,6 +19,11 @@ export const businesses = pgTable("businesses", {
   serviceRadius: integer("service_radius"), // in kilometers
   serviceAtLocation: boolean("service_at_location").default(false),
   serviceAtCustomerLocation: boolean("service_at_customer_location").default(false),
+  // Audience fields
+  customerDescription: text("customer_description"),
+  targetAgeGroups: text("target_age_groups"), // JSON array of age groups
+  customerInterests: text("customer_interests"), // JSON array of interests
+  communityInvolvement: text("community_involvement"),
   isOnboardingComplete: boolean("is_onboarding_complete").notNull().default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
@@ -77,6 +82,15 @@ export const locationProfileSchema = z.object({
 }).refine(data => data.serviceAtLocation || data.serviceAtCustomerLocation, {
   message: "At least one service method must be selected",
   path: ["serviceAtLocation"],
+});
+
+export const audienceProfileSchema = z.object({
+  customerDescription: z.string().min(10, "Customer description must be at least 10 characters").max(1000, "Description too long"),
+  targetAgeGroups: z.array(z.enum(["18-24", "25-34", "35-44", "45-54", "55-64", "65+"])).min(1, "Select at least one age group"),
+  customerInterests: z.array(z.string().min(1).max(50)).min(1, "Add at least one customer interest").max(20, "Too many interests"),
+  communityInvolvement: z.enum(["high", "medium", "low", "none"], {
+    errorMap: () => ({ message: "Please select community involvement level" })
+  }),
 });
 
 export const insertCampaignSchema = createInsertSchema(campaigns).omit({
