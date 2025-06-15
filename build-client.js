@@ -1,33 +1,22 @@
-import { build } from 'vite';
-import react from '@vitejs/plugin-react';
+#!/usr/bin/env node
+
+import { execSync } from 'child_process';
+import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+console.log('Building client for production deployment...');
 
-async function buildClient() {
-  try {
-    await build({
-      plugins: [react()],
-      resolve: {
-        alias: {
-          "@": path.resolve(__dirname, "client", "src"),
-          "@shared": path.resolve(__dirname, "shared"),
-          "@assets": path.resolve(__dirname, "attached_assets"),
-        },
-      },
-      root: path.resolve(__dirname, "client"),
-      build: {
-        outDir: path.resolve(__dirname, "client/dist"),
-        emptyOutDir: true,
-      },
-    });
-    console.log('Client build completed successfully');
-  } catch (error) {
-    console.error('Build failed:', error);
-    process.exit(1);
-  }
+// Ensure dist/public directory exists
+const distPublicPath = './dist/public';
+if (!fs.existsSync('./dist')) {
+  fs.mkdirSync('./dist');
+}
+if (!fs.existsSync(distPublicPath)) {
+  fs.mkdirSync(distPublicPath);
 }
 
-buildClient();
+// Copy client dist files to production location
+console.log('Copying client files to production directory...');
+execSync('cp -r client/dist/* dist/public/', { stdio: 'inherit' });
+
+console.log('Client build complete!');

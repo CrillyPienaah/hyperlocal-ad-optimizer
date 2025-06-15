@@ -1044,10 +1044,15 @@ app.post("/api/recommendations/channels", async (req, res) => {
 
 // Serve static files based on environment
 if (process.env.NODE_ENV === 'production') {
-  const staticPath = path.resolve(__dirname, '../dist/public');
+  // In production, try both dist/public and client/dist paths
+  const productionPath = path.resolve(__dirname, '../dist/public');
+  const clientDistPath = path.resolve(__dirname, '../client/dist');
+  
+  // Check which path exists and use it
+  const staticPath = require('fs').existsSync(productionPath) ? productionPath : clientDistPath;
   app.use(express.static(staticPath));
   
-  // Catch-all handler for SPA in production
+  // Catch-all handler for production
   app.get('*', (req, res) => {
     if (req.path.startsWith('/api')) return;
     res.sendFile(path.resolve(staticPath, 'index.html'));
