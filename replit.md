@@ -81,6 +81,7 @@ This is a full-stack web application for hyperlocal advertising optimization. Th
 - **PORT**: Server port configuration (defaults to 5000)
 
 ## Changelog
+- June 15, 2025. Fixed navigation system - rebuilt HTML with clean JavaScript, all 8 navigation tabs now working properly
 - June 14, 2025. Initial setup
 
 ## User Preferences
