@@ -5,6 +5,7 @@ import { insertBusinessSchema, insertCampaignSchema, insertCampaignMetricsSchema
 import { z } from "zod";
 import path from "path";
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 import OpenAI from "openai";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -1049,7 +1050,7 @@ if (process.env.NODE_ENV === 'production') {
   const clientDistPath = path.resolve(__dirname, '../client/dist');
   
   // Check which path exists and use it
-  const staticPath = require('fs').existsSync(productionPath) ? productionPath : clientDistPath;
+  const staticPath = fs.existsSync(productionPath) ? productionPath : clientDistPath;
   app.use(express.static(staticPath));
   
   // Catch-all handler for production
