@@ -566,6 +566,52 @@ app.post("/api/content/copywriting-assistant", async (req, res) => {
   }
 });
 
+// New simplified ad copy generation endpoint for HTML frontend
+app.post("/api/generate-ad-copy", async (req, res) => {
+  try {
+    const { businessDescription, targetAudience, campaignGoal, adPlatform, tone } = req.body;
+    
+    if (!businessDescription || !targetAudience || !campaignGoal || !adPlatform) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    // Create a mock business object for the existing function
+    const mockBusiness = {
+      name: "Your Business",
+      industry: "General",
+      city: "Local Area",
+      description: businessDescription,
+      customerDescription: targetAudience,
+      serviceAtLocation: true,
+      serviceAtCustomerLocation: false
+    };
+
+    // Map frontend goals to backend format
+    const goalMapping = {
+      'traffic': 'Drive website traffic',
+      'awareness': 'Increase brand awareness', 
+      'leads': 'Generate leads',
+      'sales': 'Boost sales',
+      'engagement': 'Increase engagement'
+    };
+
+    // Generate AI-powered ad copy variations
+    const copyVariations = await generateAdCopyVariations({
+      business: mockBusiness,
+      campaignGoal: goalMapping[campaignGoal] || campaignGoal,
+      keyMessage: businessDescription,
+      tone: tone || 'professional',
+      ctaStyle: 'action-oriented',
+      selectedChannels: [adPlatform]
+    });
+
+    res.json({ variations: copyVariations });
+  } catch (error) {
+    console.error("Error generating ad copy:", error);
+    res.status(500).json({ message: "Failed to generate ad copy" });
+  }
+});
+
 // AI copywriting assistant function
 async function generateCopywritingAssistance(params: {
   business: any;
