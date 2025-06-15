@@ -5,7 +5,6 @@ import { insertBusinessSchema, insertCampaignSchema, insertCampaignMetricsSchema
 import { z } from "zod";
 import path from "path";
 import { fileURLToPath } from 'url';
-import fs from 'fs';
 import OpenAI from "openai";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -1045,25 +1044,19 @@ app.post("/api/recommendations/channels", async (req, res) => {
 
 // Serve static files based on environment
 if (process.env.NODE_ENV === 'production') {
-  // In production, try both dist/public and client/dist paths
-  const productionPath = path.resolve(__dirname, '../dist/public');
-  const clientDistPath = path.resolve(__dirname, '../client/dist');
+  // Production: serve from dist directory (deployment location)
+  const distPath = path.resolve(__dirname, '../dist');
+  app.use(express.static(distPath));
   
-  // Check which path exists and use it
-  const staticPath = fs.existsSync(productionPath) ? productionPath : clientDistPath;
-  app.use(express.static(staticPath));
-  
-  // Catch-all handler for production
   app.get('*', (req, res) => {
     if (req.path.startsWith('/api')) return;
-    res.sendFile(path.resolve(staticPath, 'index.html'));
+    res.sendFile(path.resolve(distPath, 'index.html'));
   });
 } else {
-  // Development mode - use built client files
+  // Development: serve from client/dist
   const clientDistPath = path.resolve(__dirname, '../client/dist');
   app.use(express.static(clientDistPath));
   
-  // Catch-all handler for development
   app.get('*', (req, res) => {
     if (req.path.startsWith('/api')) return;
     res.sendFile(path.resolve(clientDistPath, 'index.html'));
