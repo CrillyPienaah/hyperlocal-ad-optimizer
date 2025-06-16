@@ -1199,7 +1199,7 @@ async function setupServer() {
       console.log('Building React client with Vite...');
       execSync('vite build', { cwd: path.resolve(__dirname, '..'), stdio: 'inherit' });
       
-      const distPath = path.resolve(__dirname, '../dist');
+      const distPath = path.resolve(__dirname, '../dist/public');
       app.use(express.static(distPath));
       
       app.get('*', (req, res) => {

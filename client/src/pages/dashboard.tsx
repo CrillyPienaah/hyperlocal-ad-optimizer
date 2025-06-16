@@ -12,6 +12,9 @@ import type { Campaign } from "@shared/schema";
 
 export default function Dashboard() {
   const [showCreateModal, setShowCreateModal] = useState(false);
+  
+  // Debug log to verify component loads
+  console.log('Dashboard component loaded');
 
   const { data: campaigns = [], isLoading: campaignsLoading } = useQuery<Campaign[]>({
     queryKey: ["/api/campaigns/business/1"],
