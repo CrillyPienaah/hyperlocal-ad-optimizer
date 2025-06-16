@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { MapPin, Target, Users, Clock, Plus, X } from "lucide-react";
 
 export default function Targeting() {
+  const { toast } = useToast();
   const [locations, setLocations] = useState([
     { id: 1, name: "Downtown Seattle", radius: 5, active: true },
     { id: 2, name: "Capitol Hill", radius: 3, active: true },
@@ -108,6 +110,10 @@ export default function Targeting() {
       { day: "Sunday", start: "07:00", end: "20:00", active: true },
     ]);
     setRenderKey(prev => prev + 1);
+    toast({
+      title: "Settings Reset",
+      description: "All targeting settings have been restored to defaults.",
+    });
     console.log('All targeting settings reset to defaults');
   };
 
@@ -120,8 +126,10 @@ export default function Targeting() {
       timestamp: new Date().toISOString()
     };
     console.log('Saving targeting settings:', targetingData);
-    // For now, just log the data - in a real app this would save to backend
-    alert('Targeting settings saved successfully!');
+    toast({
+      title: "Settings Saved",
+      description: `Saved ${locations.length} locations and targeting preferences successfully.`,
+    });
   };
 
   return (
