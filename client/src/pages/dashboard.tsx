@@ -4,9 +4,10 @@ import PerformanceChart from "@/components/dashboard/performance-chart";
 import QuickActions from "@/components/dashboard/quick-actions";
 import CampaignsTable from "@/components/campaigns/campaigns-table";
 import { Button } from "@/components/ui/button";
-import { Plus, Bell } from "lucide-react";
+import { Plus, Bell, Zap, Clock } from "lucide-react";
 import { useState } from "react";
 import CreateCampaignModal from "@/components/campaigns/create-campaign-modal";
+import { Link } from "wouter";
 import type { Campaign } from "@shared/schema";
 
 export default function Dashboard() {
@@ -35,7 +36,13 @@ export default function Dashboard() {
             <p className="text-sm text-gray-500">Manage your advertising campaigns</p>
           </div>
           <div className="flex items-center space-x-4">
-            <Button onClick={() => setShowCreateModal(true)} className="bg-primary hover:bg-blue-700">
+            <Link href="/launch-wizard">
+              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-6">
+                <Zap className="w-4 h-4 mr-2" />
+                15-Minute Launch
+              </Button>
+            </Link>
+            <Button onClick={() => setShowCreateModal(true)} variant="outline">
               <Plus className="w-4 h-4 mr-2" />
               Create Campaign
             </Button>
@@ -48,6 +55,27 @@ export default function Dashboard() {
 
       {/* Dashboard Content */}
       <div className="p-6">
+        {/* 15-Minute Launch Hero Card */}
+        <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-6 mb-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-full p-3">
+                <Clock className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-gray-900">Ready to launch your next campaign?</h3>
+                <p className="text-gray-600 mt-1">Go from business setup to live ads in just 15 minutes with our AI-powered wizard</p>
+              </div>
+            </div>
+            <Link href="/launch-wizard">
+              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-3">
+                <Zap className="w-5 h-5 mr-2" />
+                Start 15-Minute Launch
+              </Button>
+            </Link>
+          </div>
+        </div>
+
         {/* Metrics Grid */}
         <MetricsGrid summary={metricsSummary as any} isLoading={metricsLoading} />
 
