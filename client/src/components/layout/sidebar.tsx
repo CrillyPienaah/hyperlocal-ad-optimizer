@@ -9,10 +9,12 @@ import {
   Target,
   User,
   Sparkles,
-  Palette
+  Palette,
+  Rocket
 } from "lucide-react";
 
 const navigation = [
+  { name: "15-Min Launch", href: "/launch-wizard", icon: Rocket },
   { name: "Dashboard", href: "/", icon: BarChart3 },
   { name: "Campaigns", href: "/campaigns", icon: BellRing },
   { name: "Targeting", href: "/targeting", icon: MapPin },

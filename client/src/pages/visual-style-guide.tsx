@@ -66,7 +66,7 @@ export default function VisualStyleGuide() {
       );
       return response.json();
     },
-    onSuccess: (data) => {
+    onSuccess: (data: StyleRecommendations) => {
       setRecommendations(data);
       toast({
         title: "Style recommendations generated!",
