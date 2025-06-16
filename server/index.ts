@@ -1042,6 +1042,12 @@ function generateChannelRecommendations(business: any) {
         'social-media': { score: 25, reason: 'Build community around food culture and customer loyalty' },
         'email-marketing': { score: 20, reason: 'Effective for promotions, events, and repeat customer engagement' }
       },
+      'Food & Beverage': {
+        'facebook-ads': { score: 35, reason: 'Visual platform perfect for showcasing food, atmosphere, and customer experiences' },
+        'instagram-ads': { score: 30, reason: 'Highly visual content drives appetite appeal and location visits' },
+        'social-media': { score: 25, reason: 'Build community around food culture and customer loyalty' },
+        'google-ads': { score: 20, reason: 'Captures local coffee searches and drives foot traffic' }
+      },
       'retail': {
         'google-ads': { score: 35, reason: 'Captures high-intent shoppers actively searching for products' },
         'facebook-ads': { score: 30, reason: 'Excellent for product showcasing and driving store visits' },
