@@ -1,10 +1,12 @@
 import { Plus, BarChart, MapPin, DollarSign } from "lucide-react";
+import { useLocation } from "wouter";
 
 interface QuickActionsProps {
   onCreateCampaign: () => void;
 }
 
 export default function QuickActions({ onCreateCampaign }: QuickActionsProps) {
+  const [, setLocation] = useLocation();
   const actions = [
     {
       title: "Create Campaign",
@@ -18,21 +20,21 @@ export default function QuickActions({ onCreateCampaign }: QuickActionsProps) {
       description: "Detailed reports",
       icon: BarChart,
       iconBg: "bg-accent",
-      onClick: () => console.log("View Analytics"),
+      onClick: () => setLocation("/analytics"),
     },
     {
       title: "Manage Targeting",
       description: "Geographic settings",
       icon: MapPin,
       iconBg: "bg-purple-600",
-      onClick: () => console.log("Manage Targeting"),
+      onClick: () => setLocation("/targeting"),
     },
     {
       title: "Budget Settings",
       description: "Manage spending",
       icon: DollarSign,
       iconBg: "bg-warning",
-      onClick: () => console.log("Budget Settings"),
+      onClick: () => setLocation("/budget"),
     },
   ];
 
