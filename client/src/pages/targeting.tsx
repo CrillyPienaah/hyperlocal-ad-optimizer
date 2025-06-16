@@ -16,6 +16,7 @@ export default function Targeting() {
     { id: 2, name: "Capitol Hill", radius: 3, active: true },
     { id: 3, name: "Fremont", radius: 2, active: false },
   ]);
+  const [renderKey, setRenderKey] = useState(0);
 
   const [demographics, setDemographics] = useState({
     ageMin: 25,
@@ -48,6 +49,7 @@ export default function Targeting() {
       console.log('Updated locations array:', updatedLocations);
       return updatedLocations;
     });
+    setRenderKey(prev => prev + 1); // Force re-render
   };
 
   const removeLocation = (id: number) => {
@@ -101,9 +103,9 @@ export default function Targeting() {
                   </Button>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent key={renderKey} className="space-y-4">
                 <div className="text-xs text-gray-400 mb-2">
-                  Total locations: {locations.length}
+                  Total locations: {locations.length} (Render: {renderKey})
                 </div>
                 {locations.map((location) => (
                   <div key={location.id} className="flex items-center justify-between p-4 border rounded-lg">
