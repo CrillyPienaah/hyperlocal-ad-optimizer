@@ -81,6 +81,13 @@ This is a full-stack web application for hyperlocal advertising optimization. Th
 - **PORT**: Server port configuration (defaults to 5000)
 
 ## Changelog
+- June 16, 2025. Fixed critical channel planner crash and completed comprehensive budget/targeting pages
+  - Fixed channel planner array iteration bug causing component crashes when buttons clicked
+  - Built comprehensive targeting page with 4 functional tabs (Geographic, Demographics, Behavioral, Schedule)
+  - Enhanced budget page with platform allocation tracking, performance metrics, and optimization tips
+  - Added proper null checks and fallback arrays for all recommendation data
+  - Restored full functionality to channel planner with stable button interactions
+  - All navigation between pages now working smoothly without crashes
 - June 16, 2025. Completed React migration - modernized architecture and enhanced user experience
   - Migrated from static HTML to React + TypeScript component architecture
   - Created Visual Style Guide React component with authentic design recommendations
