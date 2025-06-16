@@ -439,6 +439,134 @@ app.post("/api/content/generate-copy", async (req, res) => {
   }
 });
 
+// Style recommendations configuration
+const STYLE_RULES = {
+  "modern-clean": {
+    colors: [
+      { name: "Primary", palette: ["#2563EB", "#1E40AF", "#1D4ED8"] },
+      { name: "Accent", palette: ["#F3F4F6", "#E5E7EB", "#D1D5DB"] },
+      { name: "Highlight", palette: ["#10B981", "#059669", "#047857"] }
+    ],
+    imagery: [
+      "Clean product photography with white backgrounds",
+      "Minimal geometric patterns and shapes",
+      "Professional business photography",
+      "Simple icons and illustrations"
+    ],
+    fonts: {
+      headline: "Inter",
+      body: "system-ui"
+    },
+    mock_tile_text: "Modern Business"
+  },
+  "friendly-local": {
+    colors: [
+      { name: "Warm", palette: ["#F59E0B", "#D97706", "#B45309"] },
+      { name: "Natural", palette: ["#84CC16", "#65A30D", "#4D7C0F"] },
+      { name: "Comfort", palette: ["#EF4444", "#DC2626", "#B91C1C"] }
+    ],
+    imagery: [
+      "Local community photos and events",
+      "Warm, natural lighting in photography",
+      "Hand-drawn illustrations and doodles",
+      "Authentic customer testimonial photos"
+    ],
+    fonts: {
+      headline: "Poppins",
+      body: "Open Sans"
+    },
+    mock_tile_text: "Neighborhood Favorite"
+  },
+  "classic-professional": {
+    colors: [
+      { name: "Navy", palette: ["#1E3A8A", "#1E40AF", "#3B82F6"] },
+      { name: "Gold", palette: ["#D97706", "#F59E0B", "#FCD34D"] },
+      { name: "Neutral", palette: ["#374151", "#6B7280", "#9CA3AF"] }
+    ],
+    imagery: [
+      "Professional headshots and team photos",
+      "Classic architectural photography",
+      "Formal business environments",
+      "Traditional industry imagery"
+    ],
+    fonts: {
+      headline: "Times New Roman",
+      body: "Georgia"
+    },
+    mock_tile_text: "Trusted Excellence"
+  },
+  "bold-eye-catching": {
+    colors: [
+      { name: "Electric", palette: ["#7C3AED", "#8B5CF6", "#A78BFA"] },
+      { name: "Fire", palette: ["#EF4444", "#F87171", "#FCA5A5"] },
+      { name: "Sunshine", palette: ["#F59E0B", "#FBBF24", "#FDE047"] }
+    ],
+    imagery: [
+      "High-contrast photography with dramatic lighting",
+      "Bold graphic elements and patterns",
+      "Dynamic action shots and movement",
+      "Bright, saturated color photography"
+    ],
+    fonts: {
+      headline: "Montserrat",
+      body: "Arial Black"
+    },
+    mock_tile_text: "Bold Impact"
+  }
+};
+
+// Visual style recommendations endpoint
+app.get("/api/style-recommendations", (req, res) => {
+  try {
+    const { business_type = "retail", vibe = "modern-clean" } = req.query;
+    
+    // Normalize vibe parameter
+    const vibeKey = String(vibe).toLowerCase().replace(/[^a-z-]/g, "").replace(/--+/g, "-");
+    
+    // Get base recommendations or default to modern-clean
+    const recommendations = STYLE_RULES[vibeKey] || STYLE_RULES["modern-clean"];
+    
+    // Create a copy to avoid modifying the original
+    const customizedRecommendations = JSON.parse(JSON.stringify(recommendations));
+    
+    // Add business context for local vibes
+    if (vibeKey.includes("local") && business_type) {
+      const businessTypeStr = String(business_type).toLowerCase();
+      
+      // Customize imagery for business type
+      const businessImagery = {
+        restaurant: "Photos of happy customers enjoying meals",
+        retail: "Customers browsing and purchasing products",
+        services: "Satisfied clients receiving professional service",
+        healthcare: "Caring professionals helping patients",
+        beauty: "Before/after transformations and happy clients"
+      };
+      
+      if (businessImagery[businessTypeStr]) {
+        customizedRecommendations.imagery[0] = businessImagery[businessTypeStr];
+      }
+      
+      // Add business context metadata
+      customizedRecommendations.business_context = {
+        color_description: `Colors chosen specifically for ${businessTypeStr} businesses to build trust and appeal to local customers`,
+        font_style: `Typography selected to convey the right tone for ${businessTypeStr} marketing materials`
+      };
+    }
+    
+    // Add metadata
+    customizedRecommendations.metadata = {
+      business_type: String(business_type),
+      vibe: String(vibe),
+      generated_at: new Date().toISOString()
+    };
+    
+    res.json(customizedRecommendations);
+  } catch (error) {
+    console.error("Error generating style recommendations:", error);
+    res.status(500).json({ message: "Failed to generate style recommendations" });
+  }
+});
+
 // AI ad copy generation function
 async function generateAdCopyVariations(params: {
   business: any;
