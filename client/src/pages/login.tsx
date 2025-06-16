@@ -25,6 +25,7 @@ interface LoginProps {
 
 export default function Login({ onLoginSuccess }: LoginProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [showSignUp, setShowSignUp] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<LoginForm>({
@@ -66,6 +67,14 @@ export default function Login({ onLoginSuccess }: LoginProps) {
     form.setValue("email", "mike@coffeeshop.com");
     form.setValue("password", "demo");
     onSubmit({ email: "mike@coffeeshop.com", password: "demo" });
+  };
+
+  const handleSignUpClick = () => {
+    toast({
+      title: "Sign Up Coming Soon",
+      description: "New business registration will be available soon. For now, use the demo account to explore the platform.",
+    });
+    setShowSignUp(true);
   };
 
   return (
@@ -158,7 +167,10 @@ export default function Login({ onLoginSuccess }: LoginProps) {
           <div className="mt-4 text-center">
             <p className="text-sm text-gray-600">
               Don't have an account?{" "}
-              <button className="text-blue-600 hover:underline font-medium">
+              <button 
+                onClick={handleSignUpClick}
+                className="text-blue-600 hover:underline font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 rounded px-1"
+              >
                 Sign up
               </button>
             </p>
