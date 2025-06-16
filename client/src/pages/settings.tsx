@@ -7,9 +7,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
 import { User, Bell, CreditCard, Shield, Globe, Palette, Bot } from "lucide-react";
 
 export default function Settings() {
+  const { toast } = useToast();
+  
   const [notifications, setNotifications] = useState({
     email: true,
     push: false,
@@ -24,6 +27,27 @@ export default function Settings() {
     website: "https://mikescoffee.com",
     timezone: "America/New_York",
   });
+
+  const handleConnectPlatform = (platform: string) => {
+    toast({
+      title: `Connecting to ${platform}`,
+      description: "Opening OAuth authentication window...",
+    });
+    // Simulate OAuth connection process
+    setTimeout(() => {
+      toast({
+        title: `${platform} Connected`,
+        description: "Your account has been successfully linked.",
+      });
+    }, 2000);
+  };
+
+  const handleDisconnectPlatform = (platform: string) => {
+    toast({
+      title: `Disconnected from ${platform}`,
+      description: "Your account has been unlinked.",
+    });
+  };
 
   return (
     <>
@@ -298,7 +322,7 @@ export default function Settings() {
                         <p className="text-sm text-gray-500">Not connected</p>
                       </div>
                     </div>
-                    <Button variant="outline" size="sm">Connect</Button>
+                    <Button variant="outline" size="sm" onClick={() => handleConnectPlatform("Google Ads")}>Connect</Button>
                   </div>
                   <div className="flex items-center justify-between p-4 border rounded-lg">
                     <div className="flex items-center space-x-3">
@@ -322,7 +346,7 @@ export default function Settings() {
                         <p className="text-sm text-gray-500">Not connected</p>
                       </div>
                     </div>
-                    <Button variant="outline" size="sm">Connect</Button>
+                    <Button variant="outline" size="sm" onClick={() => handleConnectPlatform("X (Twitter) Ads")}>Connect</Button>
                   </div>
                 </div>
               </CardContent>
