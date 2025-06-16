@@ -81,6 +81,15 @@ This is a full-stack web application for hyperlocal advertising optimization. Th
 - **PORT**: Server port configuration (defaults to 5000)
 
 ## Changelog
+- June 15, 2025. Implemented core "15-Minute Campaign Launch" experience - the platform's key value proposition
+  - Complete guided wizard: business profile → AI analysis → channel recommendations → ad copy generation → campaign launch
+  - Real-time 15-minute countdown timer with progress tracking
+  - AI market analysis simulation showing local customer research and competitor insights
+  - Personalized channel recommendations with match scores and performance estimates
+  - Auto-generated ad copy using business details for Google Ads and Facebook
+  - Immediate campaign launch creating live campaigns visible in dashboard
+  - Campaign persistence system using localStorage for data storage
+  - Dashboard metrics integration showing user-created campaigns
 - June 15, 2025. Completed full platform functionality - all 8 navigation tabs working with comprehensive interactive features
   - Dashboard: Interactive metrics, drill-down analysis, campaign management, alerts system
   - Campaigns: Create campaign form, campaign management, status tracking
