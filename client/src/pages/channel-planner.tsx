@@ -289,17 +289,17 @@ export default function ChannelPlanner() {
               <div>
                 <h2 className="text-xl font-semibold mb-4">Primary Recommendations</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {recommendations.primaryChannels?.map((channel: Channel) => 
+                  {(recommendations.primaryChannels || []).map((channel: Channel) => 
                     renderChannelCard(channel, true)
                   )}
                 </div>
               </div>
               
-              {recommendations.secondaryChannels?.length > 0 && (
+              {(recommendations.secondaryChannels || []).length > 0 && (
                 <div>
                   <h2 className="text-xl font-semibold mb-4">Additional Options</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {recommendations.secondaryChannels.map((channel: Channel) => 
+                    {(recommendations.secondaryChannels || []).map((channel: Channel) => 
                       renderChannelCard(channel)
                     )}
                   </div>
@@ -339,7 +339,7 @@ export default function ChannelPlanner() {
             </div>
           ) : recommendations ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[...recommendations.primaryChannels, ...recommendations.secondaryChannels].map((channel: Channel) => 
+              {[...(recommendations.primaryChannels || []), ...(recommendations.secondaryChannels || [])].map((channel: Channel) => 
                 renderChannelCard(channel)
               )}
             </div>
@@ -373,7 +373,7 @@ export default function ChannelPlanner() {
                 </p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {recommendations.budgetOptimized.map((channel: Channel) => 
+                {(recommendations.budgetOptimized || []).map((channel: Channel) => 
                   renderChannelCard(channel)
                 )}
               </div>
