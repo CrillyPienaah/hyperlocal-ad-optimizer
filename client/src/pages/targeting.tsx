@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,6 +17,11 @@ export default function Targeting() {
     { id: 3, name: "Fremont", radius: 2, active: false },
   ]);
   const [renderKey, setRenderKey] = useState(0);
+
+  useEffect(() => {
+    console.log('Component re-rendered, locations:', locations.length, 'renderKey:', renderKey);
+    console.log('Current locations state:', locations);
+  }, [locations, renderKey]);
 
   const [demographics, setDemographics] = useState({
     ageMin: 25,
@@ -108,54 +113,40 @@ export default function Targeting() {
                 <div className="text-xs text-gray-400 mb-2">
                   Total locations: {locations.length} (Render: {renderKey})
                 </div>
+                
+                {/* Debug: Simple list rendering */}
+                <div className="bg-yellow-100 p-2 mb-4 text-xs">
+                  <strong>Debug - Raw location names:</strong><br />
+                  {locations.map(loc => `${loc.name} (ID:${loc.id})`).join(', ')}
+                </div>
+
                 <div className="space-y-4">
-                {locations.length > 0 && locations.map((location, index) => (
-                  <div key={`${location.id}-${index}-${renderKey}`} className="flex items-center justify-between p-4 border rounded-lg bg-white">
-                    <div className="flex items-center space-x-4">
-                      <Switch
-                        checked={location.active}
-                        onCheckedChange={() => toggleLocation(location.id)}
-                      />
-                      <div className="flex-1">
-                        <Input
-                          value={location.name}
-                          onChange={(e) => {
-                            const newLocations = locations.map(loc =>
-                              loc.id === location.id ? { ...loc, name: e.target.value } : loc
-                            );
-                            setLocations(newLocations);
-                          }}
-                          className="font-medium"
+                {locations.map((location, index) => {
+                  console.log(`Rendering location ${index}:`, location);
+                  return (
+                    <div key={location.id} className="flex items-center justify-between p-4 border-2 border-blue-500 rounded-lg bg-gray-50">
+                      <div className="flex items-center space-x-4">
+                        <Switch
+                          checked={location.active}
+                          onCheckedChange={() => toggleLocation(location.id)}
                         />
-                        <div className="mt-2">
-                          <Label className="text-sm text-gray-500">
-                            Radius: {location.radius} miles
-                          </Label>
-                          <Slider
-                            value={[location.radius]}
-                            onValueChange={(value) => {
-                              const newLocations = locations.map(loc =>
-                                loc.id === location.id ? { ...loc, radius: value[0] } : loc
-                              );
-                              setLocations(newLocations);
-                            }}
-                            max={25}
-                            min={1}
-                            step={1}
-                            className="mt-1"
-                          />
+                        <div className="flex-1">
+                          <div className="font-medium text-lg">{location.name}</div>
+                          <div className="text-sm text-gray-500">
+                            Radius: {location.radius} miles | ID: {location.id}
+                          </div>
                         </div>
                       </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => removeLocation(location.id)}
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => removeLocation(location.id)}
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
-                  </div>
-                ))}
+                  );
+                })}
                 </div>
               </CardContent>
             </Card>
