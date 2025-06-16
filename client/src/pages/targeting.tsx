@@ -85,6 +85,45 @@ export default function Targeting() {
     ));
   };
 
+  const resetToDefaults = () => {
+    console.log('Reset to Defaults clicked');
+    setLocations([
+      { id: 1, name: "Downtown Seattle", radius: 5, active: true },
+      { id: 2, name: "Capitol Hill", radius: 3, active: true },
+      { id: 3, name: "Fremont", radius: 2, active: false },
+    ]);
+    setDemographics({
+      ageMin: 25,
+      ageMax: 55,
+      interests: ["coffee", "local business", "organic food"],
+      behaviors: ["frequent local shoppers", "mobile users"],
+    });
+    setSchedules([
+      { day: "Monday", start: "07:00", end: "22:00", active: true },
+      { day: "Tuesday", start: "07:00", end: "22:00", active: true },
+      { day: "Wednesday", start: "07:00", end: "22:00", active: true },
+      { day: "Thursday", start: "07:00", end: "22:00", active: true },
+      { day: "Friday", start: "07:00", end: "22:00", active: true },
+      { day: "Saturday", start: "07:00", end: "22:00", active: true },
+      { day: "Sunday", start: "07:00", end: "20:00", active: true },
+    ]);
+    setRenderKey(prev => prev + 1);
+    console.log('All targeting settings reset to defaults');
+  };
+
+  const saveTargetingSettings = () => {
+    console.log('Save Targeting Settings clicked');
+    const targetingData = {
+      locations,
+      demographics,
+      schedule: schedules,
+      timestamp: new Date().toISOString()
+    };
+    console.log('Saving targeting settings:', targetingData);
+    // For now, just log the data - in a real app this would save to backend
+    alert('Targeting settings saved successfully!');
+  };
+
   return (
     <>
       <header className="bg-white border-b border-gray-200 px-6 py-4">
@@ -422,8 +461,8 @@ export default function Targeting() {
         </Tabs>
 
         <div className="mt-8 flex justify-end space-x-4">
-          <Button variant="outline">Reset to Defaults</Button>
-          <Button>Save Targeting Settings</Button>
+          <Button variant="outline" onClick={resetToDefaults}>Reset to Defaults</Button>
+          <Button onClick={saveTargetingSettings}>Save Targeting Settings</Button>
         </div>
       </div>
     </>
