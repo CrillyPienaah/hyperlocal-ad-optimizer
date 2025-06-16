@@ -1190,34 +1190,30 @@ async function setupServer() {
       res.sendFile(path.resolve(distPath, 'index.html'));
     });
   } else {
-    // Development: use Vite dev server with proper configuration
+    // Development: serve built client files directly
+    console.log('Setting up development server for React app...');
+    
+    // Use the existing Vite build system
+    const { execSync } = require('child_process');
     try {
-      const { createServer } = await import('vite');
+      console.log('Building React client with Vite...');
+      execSync('vite build', { cwd: path.resolve(__dirname, '..'), stdio: 'inherit' });
       
-      const vite = await createServer({
-        server: { middlewareMode: true },
-        appType: 'spa',
-        root: path.resolve(__dirname, '../client'),
-        resolve: {
-          alias: {
-            '@': path.resolve(__dirname, '../client/src'),
-            '@shared': path.resolve(__dirname, '../shared'),
-          },
-        },
-        optimizeDeps: {
-          include: ['react', 'react-dom'],
-        },
+      const distPath = path.resolve(__dirname, '../dist');
+      app.use(express.static(distPath));
+      
+      app.get('*', (req, res) => {
+        if (req.path.startsWith('/api')) return;
+        res.sendFile(path.resolve(distPath, 'index.html'));
       });
       
-      app.use(vite.ssrFixStacktrace);
-      app.use(vite.middlewares);
-      
-      console.log('Vite development server initialized with module resolution');
+      console.log('Serving built React application from dist/');
     } catch (error) {
-      console.log('Vite setup failed, using basic serving:', error.message);
-      // Fallback: serve static client files
+      console.log('Build failed, serving development files:', error.message);
+      // Fallback: serve client files directly
       const clientPath = path.resolve(__dirname, '../client');
       app.use(express.static(clientPath));
+      app.use('/src', express.static(path.join(clientPath, 'src')));
       
       app.get('*', (req, res) => {
         if (req.path.startsWith('/api')) return;
@@ -1226,7 +1222,7 @@ async function setupServer() {
     }
   }
   
-  server.listen(port, () => {
+  server.listen(port, '0.0.0.0', () => {
     console.log(`Server running on port ${port}`);
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
     console.log(`Frontend available at http://localhost:${port}`);
