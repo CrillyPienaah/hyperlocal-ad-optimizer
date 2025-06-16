@@ -1170,41 +1170,44 @@ app.post("/api/recommendations/channels", async (req, res) => {
   }
 });
 
-// Serve static files based on environment
-if (process.env.NODE_ENV === 'production') {
-  // Production: serve from dist directory (deployment location)
-  const distPath = path.resolve(__dirname, '../dist');
-  app.use(express.static(distPath));
+// Setup development server to serve React app
+async function setupServer() {
+  if (process.env.NODE_ENV === 'production') {
+    // Production: serve from dist directory
+    const distPath = path.resolve(__dirname, '../dist');
+    app.use(express.static(distPath));
+    
+    app.get('*', (req, res) => {
+      if (req.path.startsWith('/api')) return;
+      res.sendFile(path.resolve(distPath, 'index.html'));
+    });
+  } else {
+    // Development: serve React app with hot reloading
+    try {
+      const { setupVite } = await import("./vite");
+      await setupVite(app, server);
+    } catch (error) {
+      console.log('Vite setup failed, using basic static serving');
+      // Fallback to serving client files directly
+      const clientPath = path.resolve(__dirname, '../client');
+      app.use(express.static(path.join(clientPath, 'public')));
+      
+      app.get('*', (req, res) => {
+        if (req.path.startsWith('/api')) return;
+        res.sendFile(path.join(clientPath, 'index.html'));
+      });
+    }
+  }
   
-  app.get('*', (req, res) => {
-    if (req.path.startsWith('/api')) return;
-    res.sendFile(path.resolve(distPath, 'index.html'));
-  });
-} else {
-  // Development: serve from client/dist
-  const clientDistPath = path.resolve(__dirname, '../client/dist');
-  app.use(express.static(clientDistPath));
-  
-  app.get('*', (req, res) => {
-    if (req.path.startsWith('/api')) return;
-    res.sendFile(path.resolve(clientDistPath, 'index.html'));
+  server.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`Frontend available at http://localhost:${port}`);
+    console.log(`API available at http://localhost:${port}/api`);
   });
 }
 
-// Error handler
-app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-  console.error('Error:', err);
-  const status = err.status || err.statusCode || 500;
-  const message = err.message || "Internal Server Error";
-  res.status(status).json({ message });
-});
-
 const server = createServer(app);
-const PORT = parseInt(process.env.PORT || '5000');
+const port = parseInt(process.env.PORT || '5000');
 
-server.listen(PORT, "0.0.0.0", () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`Frontend available at http://localhost:${PORT}`);
-  console.log(`API available at http://localhost:${PORT}/api`);
-});
+setupServer().catch(console.error);
