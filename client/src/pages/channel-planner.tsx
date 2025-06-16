@@ -61,6 +61,7 @@ export default function ChannelPlanner() {
   const businessId = 1; // Demo business ID
   const [selectedBudget, setSelectedBudget] = useState<string>("201-500");
   const [selectedGoals, setSelectedGoals] = useState<string[]>(["brand-awareness"]);
+  const [activeTab, setActiveTab] = useState<string>("recommended");
   const { toast } = useToast();
 
   const { data: recommendations, isLoading, refetch } = useQuery({
@@ -258,7 +259,7 @@ export default function ChannelPlanner() {
       </Card>
 
       {/* Recommendations */}
-      <Tabs defaultValue="recommended" className="space-y-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="recommended">Top Picks</TabsTrigger>
           <TabsTrigger value="all">All Channels</TabsTrigger>
