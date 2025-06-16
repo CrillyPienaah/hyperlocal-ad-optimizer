@@ -1,4 +1,5 @@
 import { Link, useLocation } from "wouter";
+import { Button } from "@/components/ui/button";
 import { 
   BarChart3, 
   BellRing, 
@@ -10,7 +11,8 @@ import {
   User,
   Sparkles,
   Palette,
-  Rocket
+  Rocket,
+  LogOut
 } from "lucide-react";
 
 const navigation = [
@@ -26,7 +28,12 @@ const navigation = [
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 
-export default function Sidebar() {
+interface SidebarProps {
+  businessName?: string | null;
+  onLogout?: () => void;
+}
+
+export default function Sidebar({ businessName, onLogout }: SidebarProps) {
   const [location] = useLocation();
 
   return (

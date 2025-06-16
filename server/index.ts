@@ -1156,6 +1156,48 @@ function getCostScore(costTier: string): number {
   return scores[costTier as keyof typeof scores] || 2;
 }
 
+// Authentication endpoint
+app.post("/api/auth/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
+
+    // Check demo credentials
+    if (email === "mike@coffeeshop.com" && password === "demo") {
+      const business = await storage.getBusiness(1);
+      if (business) {
+        return res.json({
+          success: true,
+          businessId: business.id,
+          businessName: business.name,
+          message: "Login successful"
+        });
+      }
+    }
+
+    // Check if business exists by email
+    const business = await storage.getBusinessByEmail(email);
+    if (!business) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    // In a real app, you'd verify password hash here
+    // For demo purposes, we'll accept any password for existing businesses
+    res.json({
+      success: true,
+      businessId: business.id,
+      businessName: business.name,
+      message: "Login successful"
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 // Channel recommendations endpoint
 app.post("/api/recommendations/channels", async (req, res) => {
   try {
