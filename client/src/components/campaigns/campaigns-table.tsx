@@ -12,6 +12,23 @@ interface CampaignsTableProps {
 }
 
 export default function CampaignsTable({ campaigns, isLoading }: CampaignsTableProps) {
+  const handleEditCampaign = (campaign: Campaign) => {
+    console.log('Edit campaign clicked:', campaign.name);
+    alert(`Edit functionality for "${campaign.name}" will open campaign editor.`);
+  };
+
+  const handleToggleCampaign = (campaign: Campaign) => {
+    console.log('Toggle campaign clicked:', campaign.name, campaign.status);
+    alert(`${campaign.status === 'active' ? 'Pausing' : 'Starting'} campaign "${campaign.name}"`);
+  };
+
+  const handleDeleteCampaign = (campaign: Campaign) => {
+    console.log('Delete campaign clicked:', campaign.name);
+    if (confirm(`Are you sure you want to delete "${campaign.name}"?`)) {
+      alert(`Campaign "${campaign.name}" deleted.`);
+    }
+  };
+
   const getCampaignIcon = (name: string) => {
     if (name.toLowerCase().includes('coffee')) return Coffee;
     if (name.toLowerCase().includes('discount')) return Percent;
@@ -142,17 +159,32 @@ export default function CampaignsTable({ campaigns, isLoading }: CampaignsTableP
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex items-center space-x-2">
-                      <Button variant="ghost" size="icon" className="text-primary hover:text-blue-700">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="text-primary hover:text-blue-700"
+                        onClick={() => handleEditCampaign(campaign)}
+                      >
                         <Edit className="w-4 h-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="text-gray-400 hover:text-gray-600"
+                        onClick={() => handleToggleCampaign(campaign)}
+                      >
                         {campaign.status === 'active' ? (
                           <Pause className="w-4 h-4" />
                         ) : (
                           <Play className="w-4 h-4" />
                         )}
                       </Button>
-                      <Button variant="ghost" size="icon" className="text-gray-400 hover:text-red-600">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="text-gray-400 hover:text-red-600"
+                        onClick={() => handleDeleteCampaign(campaign)}
+                      >
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
