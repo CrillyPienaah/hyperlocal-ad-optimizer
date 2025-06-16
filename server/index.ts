@@ -1130,8 +1130,8 @@ function generateChannelRecommendations(business: any) {
     };
   }).sort((a, b) => b.suitabilityScore - a.suitabilityScore);
 
-  const primaryChannels = recommendations.filter(ch => ch.suitabilityScore >= 70).slice(0, 3);
-  const secondaryChannels = recommendations.filter(ch => ch.suitabilityScore >= 40 && ch.suitabilityScore < 70);
+  const primaryChannels = recommendations.slice(0, 2); // Top 2 recommendations
+  const secondaryChannels = recommendations.slice(2, 5); // Next 3 recommendations
   const budgetOptimized = recommendations
     .filter(ch => ch.costTier === 'low' || ch.costTier === 'medium')
     .sort((a, b) => (b.suitabilityScore / getCostScore(b.costTier)) - (a.suitabilityScore / getCostScore(a.costTier)))
