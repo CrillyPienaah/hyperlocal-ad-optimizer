@@ -64,7 +64,7 @@ export default function ChannelPlanner() {
   const [activeTab, setActiveTab] = useState<string>("recommended");
   const { toast } = useToast();
 
-  const { data: recommendations, isLoading, refetch } = useQuery({
+  const { data: apiResponse, isLoading, refetch } = useQuery({
     queryKey: ['/api/recommendations/channels', businessId, selectedBudget],
     queryFn: async () => {
       const response = await apiRequest("POST", "/api/recommendations/channels", {
@@ -75,6 +75,8 @@ export default function ChannelPlanner() {
       return response.json();
     }
   });
+
+  const recommendations = apiResponse?.recommendations;
 
   const optimizeMutation = useMutation({
     mutationFn: async (channels: string[]) => {
