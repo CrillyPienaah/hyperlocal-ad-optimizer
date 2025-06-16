@@ -22,6 +22,14 @@ const openai = new OpenAI({
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Set proper MIME types for JavaScript modules
+app.use((req, res, next) => {
+  if (req.url.endsWith('.js') || req.url.endsWith('.jsx') || req.url.endsWith('.ts') || req.url.endsWith('.tsx')) {
+    res.type('application/javascript');
+  }
+  next();
+});
+
 // CORS for development
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
@@ -1182,15 +1190,34 @@ async function setupServer() {
       res.sendFile(path.resolve(distPath, 'index.html'));
     });
   } else {
-    // Development: serve React app with hot reloading
+    // Development: use Vite dev server with proper configuration
     try {
-      const { setupVite } = await import("./vite");
-      await setupVite(app, server);
+      const { createServer } = await import('vite');
+      
+      const vite = await createServer({
+        server: { middlewareMode: true },
+        appType: 'spa',
+        root: path.resolve(__dirname, '../client'),
+        resolve: {
+          alias: {
+            '@': path.resolve(__dirname, '../client/src'),
+            '@shared': path.resolve(__dirname, '../shared'),
+          },
+        },
+        optimizeDeps: {
+          include: ['react', 'react-dom'],
+        },
+      });
+      
+      app.use(vite.ssrFixStacktrace);
+      app.use(vite.middlewares);
+      
+      console.log('Vite development server initialized with module resolution');
     } catch (error) {
-      console.log('Vite setup failed, using basic static serving');
-      // Fallback to serving client files directly
+      console.log('Vite setup failed, using basic serving:', error.message);
+      // Fallback: serve static client files
       const clientPath = path.resolve(__dirname, '../client');
-      app.use(express.static(path.join(clientPath, 'public')));
+      app.use(express.static(clientPath));
       
       app.get('*', (req, res) => {
         if (req.path.startsWith('/api')) return;
