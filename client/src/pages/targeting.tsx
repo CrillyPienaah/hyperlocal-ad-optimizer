@@ -42,8 +42,12 @@ export default function Targeting() {
       radius: 5,
       active: true,
     };
-    setLocations([...locations, newLocation]);
-    console.log('Location added:', newLocation);
+    setLocations(prevLocations => {
+      const updatedLocations = [...prevLocations, newLocation];
+      console.log('Location added:', newLocation);
+      console.log('Updated locations array:', updatedLocations);
+      return updatedLocations;
+    });
   };
 
   const removeLocation = (id: number) => {
@@ -98,6 +102,9 @@ export default function Targeting() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                <div className="text-xs text-gray-400 mb-2">
+                  Total locations: {locations.length}
+                </div>
                 {locations.map((location) => (
                   <div key={location.id} className="flex items-center justify-between p-4 border rounded-lg">
                     <div className="flex items-center space-x-4">
