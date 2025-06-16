@@ -74,16 +74,30 @@ export default function Sidebar({ businessName, onLogout }: SidebarProps) {
       </nav>
 
       {/* User Profile */}
-      <div className="p-4 border-t border-gray-200">
-        <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
-          <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-            <User className="w-4 h-4 text-gray-600" />
+      <div className="p-4 border-t border-gray-200 space-y-2">
+        <div className="flex items-center space-x-3 p-3 rounded-lg bg-gray-50">
+          <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+            <User className="w-4 h-4 text-white" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900">Mike's Coffee Shop</p>
+            <p className="text-sm font-medium text-gray-900">
+              {businessName || "Mike's Coffee Shop"}
+            </p>
             <p className="text-xs text-gray-500">mike@coffeeshop.com</p>
           </div>
         </div>
+        
+        {onLogout && (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={onLogout}
+            className="w-full justify-start text-gray-600 hover:text-gray-900"
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            Sign Out
+          </Button>
+        )}
       </div>
     </aside>
   );
