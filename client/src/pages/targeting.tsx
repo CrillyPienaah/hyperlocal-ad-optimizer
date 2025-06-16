@@ -43,7 +43,7 @@ export default function Targeting() {
   const addLocation = () => {
     console.log('Add Location clicked, current locations:', locations.length);
     const newLocation = {
-      id: Date.now(), // Use timestamp for unique ID
+      id: Date.now(),
       name: "New Location",
       radius: 5,
       active: true,
@@ -54,7 +54,24 @@ export default function Targeting() {
       console.log('Updated locations array:', updatedLocations);
       return updatedLocations;
     });
-    setRenderKey(prev => prev + 1); // Force re-render
+    setRenderKey(prev => prev + 1);
+  };
+
+  const addToronto = () => {
+    console.log('Add Toronto clicked, current locations:', locations.length);
+    const newLocation = {
+      id: Date.now(),
+      name: "Toronto",
+      radius: 10,
+      active: true,
+    };
+    setLocations(prevLocations => {
+      const updatedLocations = [...prevLocations, newLocation];
+      console.log('Toronto location added:', newLocation);
+      console.log('Updated locations array:', updatedLocations);
+      return updatedLocations;
+    });
+    setRenderKey(prev => prev + 1);
   };
 
   const removeLocation = (id: number) => {
@@ -103,10 +120,16 @@ export default function Targeting() {
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   Hyperlocal Targeting
-                  <Button onClick={addLocation} size="sm">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Location
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button onClick={addToronto} size="sm" variant="outline">
+                      <MapPin className="w-4 h-4 mr-2" />
+                      Add Toronto
+                    </Button>
+                    <Button onClick={addLocation} size="sm">
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Location
+                    </Button>
+                  </div>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
