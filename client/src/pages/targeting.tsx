@@ -19,6 +19,7 @@ export default function Targeting() {
     { id: 3, name: "Fremont", radius: 2, active: false },
   ]);
   const [renderKey, setRenderKey] = useState(0);
+  const [newInterest, setNewInterest] = useState("");
 
   useEffect(() => {
     console.log('Component re-rendered, locations:', locations.length, 'renderKey:', renderKey);
@@ -74,6 +75,21 @@ export default function Targeting() {
       return updatedLocations;
     });
     setRenderKey(prev => prev + 1);
+  };
+
+  const addInterest = () => {
+    if (newInterest.trim() && !demographics.interests.includes(newInterest.trim())) {
+      console.log('Adding new interest:', newInterest);
+      setDemographics({
+        ...demographics,
+        interests: [...demographics.interests, newInterest.trim()]
+      });
+      setNewInterest("");
+      toast({
+        title: "Interest Added",
+        description: `Added "${newInterest.trim()}" to targeting interests.`,
+      });
+    }
   };
 
   const removeLocation = (id: number) => {
@@ -343,8 +359,13 @@ export default function Targeting() {
                     ))}
                   </div>
                   <div className="flex gap-2">
-                    <Input placeholder="Add new interest..." />
-                    <Button size="sm">Add</Button>
+                    <Input 
+                      placeholder="Add new interest..." 
+                      value={newInterest}
+                      onChange={(e) => setNewInterest(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && addInterest()}
+                    />
+                    <Button size="sm" onClick={addInterest}>Add</Button>
                   </div>
                 </div>
 
