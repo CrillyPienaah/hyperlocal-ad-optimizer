@@ -35,13 +35,15 @@ export default function Targeting() {
   ]);
 
   const addLocation = () => {
+    console.log('Add Location clicked, current locations:', locations.length);
     const newLocation = {
-      id: locations.length + 1,
+      id: Date.now(), // Use timestamp for unique ID
       name: "New Location",
       radius: 5,
       active: true,
     };
     setLocations([...locations, newLocation]);
+    console.log('Location added:', newLocation);
   };
 
   const removeLocation = (id: number) => {
