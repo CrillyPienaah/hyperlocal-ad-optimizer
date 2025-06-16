@@ -53,7 +53,8 @@ export default function Targeting() {
   };
 
   const removeLocation = (id: number) => {
-    setLocations(locations.filter(loc => loc.id !== id));
+    setLocations(prevLocations => prevLocations.filter(loc => loc.id !== id));
+    setRenderKey(prev => prev + 1);
   };
 
   const toggleLocation = (id: number) => {
@@ -103,12 +104,13 @@ export default function Targeting() {
                   </Button>
                 </CardTitle>
               </CardHeader>
-              <CardContent key={renderKey} className="space-y-4">
+              <CardContent className="space-y-4">
                 <div className="text-xs text-gray-400 mb-2">
                   Total locations: {locations.length} (Render: {renderKey})
                 </div>
-                {locations.map((location) => (
-                  <div key={location.id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="space-y-4">
+                {locations.length > 0 && locations.map((location, index) => (
+                  <div key={`${location.id}-${index}-${renderKey}`} className="flex items-center justify-between p-4 border rounded-lg bg-white">
                     <div className="flex items-center space-x-4">
                       <Switch
                         checked={location.active}
@@ -118,9 +120,10 @@ export default function Targeting() {
                         <Input
                           value={location.name}
                           onChange={(e) => {
-                            setLocations(locations.map(loc =>
+                            const newLocations = locations.map(loc =>
                               loc.id === location.id ? { ...loc, name: e.target.value } : loc
-                            ));
+                            );
+                            setLocations(newLocations);
                           }}
                           className="font-medium"
                         />
@@ -131,9 +134,10 @@ export default function Targeting() {
                           <Slider
                             value={[location.radius]}
                             onValueChange={(value) => {
-                              setLocations(locations.map(loc =>
+                              const newLocations = locations.map(loc =>
                                 loc.id === location.id ? { ...loc, radius: value[0] } : loc
-                              ));
+                              );
+                              setLocations(newLocations);
                             }}
                             max={25}
                             min={1}
@@ -152,6 +156,7 @@ export default function Targeting() {
                     </Button>
                   </div>
                 ))}
+                </div>
               </CardContent>
             </Card>
 
