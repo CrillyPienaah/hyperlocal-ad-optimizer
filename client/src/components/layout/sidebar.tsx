@@ -8,7 +8,8 @@ import {
   Settings,
   Target,
   User,
-  Sparkles
+  Sparkles,
+  Palette
 } from "lucide-react";
 
 const navigation = [
@@ -19,6 +20,7 @@ const navigation = [
   { name: "Analytics", href: "/analytics", icon: TrendingUp },
   { name: "AI Copy Generator", href: "/ad-copy-generator", icon: Sparkles },
   { name: "Channel Planner", href: "/channel-planner", icon: Target },
+  { name: "Visual Style Guide", href: "/visual-style", icon: Palette },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 

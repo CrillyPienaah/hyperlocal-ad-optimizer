@@ -12,6 +12,7 @@ import Settings from "@/pages/settings";
 import Onboarding from "@/pages/onboarding";
 import AdCopyGeneratorPage from "@/pages/ad-copy-generator";
 import ChannelPlanner from "@/pages/channel-planner";
+import VisualStyleGuide from "@/pages/visual-style-guide";
 import NotFound from "@/pages/not-found";
 import Sidebar from "@/components/layout/sidebar";
 
@@ -28,6 +29,7 @@ function Router() {
           <Route path="/analytics" component={Analytics} />
           <Route path="/ad-copy-generator" component={AdCopyGeneratorPage} />
           <Route path="/channel-planner" component={ChannelPlanner} />
+          <Route path="/visual-style" component={VisualStyleGuide} />
           <Route path="/settings" component={Settings} />
           <Route path="/onboarding" component={Onboarding} />
           <Route component={NotFound} />
